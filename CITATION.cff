@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this functional or its reproduction package, please cite this software and the accompanying article."
+title: "GP93 hydrogen-exact exchange: reproducibility package"
+type: software
+authors:
+  - family-names: Imoto
+    given-names: Fumihiro
+    orcid: "https://orcid.org/0000-0003-4263-8769"
+repository-code: "https://github.com/fimoto/gp93-exchange-functional"
+version: 1.0.0
+date-released: 2026-07-25

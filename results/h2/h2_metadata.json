@@ -1,0 +1,109 @@
+{
+  "input_file": "inputs/h2.json",
+  "input_settings": {
+    "schema_version": 1,
+    "purpose": "H2 binding-region Fmix+LYP and same-basis FCI reference curves.",
+    "experimental_reference_file": "data/h2_reference.csv",
+    "basis": "cc-pvtz",
+    "coordinate_unit": "Angstrom",
+    "molecular_geometry": "two H atoms centered on the z axis",
+    "exchange": "custom Fmix",
+    "correlation_libxc_suffix": ",LYP",
+    "production_grid_level": 5,
+    "bond_lengths_angstrom": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.68,
+      0.7,
+      0.72,
+      0.74,
+      0.76,
+      0.78,
+      0.8,
+      0.85,
+      0.9,
+      1.0,
+      1.1,
+      1.2,
+      1.3,
+      1.4,
+      1.6
+    ],
+    "fmix_scf": {
+      "conv_tol": 1e-09,
+      "initial_max_cycle": 160,
+      "stabilized_stage": {
+        "damping": 0.2,
+        "level_shift_ha": 0.1
+      },
+      "final_stage": {
+        "damping": 0.0,
+        "level_shift_ha": 0.0,
+        "max_cycle": 100
+      }
+    },
+    "reference_scf": {
+      "conv_tol": 1e-11,
+      "max_cycle": 100
+    },
+    "fci": {
+      "conv_tol": 1e-11
+    },
+    "spin_density_norm_tolerance": 1e-06,
+    "spline_search_points": 10001,
+    "plot_interpolation_points": 1000,
+    "grid_validation": {
+      "grid_levels": [
+        5,
+        6
+      ],
+      "bond_lengths_angstrom": [
+        0.7,
+        0.72,
+        0.74
+      ]
+    }
+  },
+  "selected_parameters": {
+    "s0": 0.16,
+    "p": 8
+  },
+  "functional": "implemented Fmix(s0=0.16,p=8)+LYP",
+  "implementation_includes": [
+    "alpha switch",
+    "broad log-density window Xn",
+    "s and z clipping"
+  ],
+  "molecular_spin_treatment": "UKS with identical alpha/beta initialization; final spin norm saved",
+  "basis": "cc-pvtz",
+  "grid_level": 5,
+  "plot_interpolation_points": 1000,
+  "experimental_reference": {
+    "system": "H2",
+    "property": "equilibrium_bond_length",
+    "value": "0.7414",
+    "unit": "angstrom",
+    "source": "NIST Computational Chemistry Comparison and Benchmark Database",
+    "reference_note": "experimental geometry; CCCBDB cites 1979 Huber and Herzberg compilation",
+    "source_url": "https://cccbdb.nist.gov/exp2x.asp?casno=1333740",
+    "access_date": "2026-07-25"
+  },
+  "dissociation_thresholds_Ha": {
+    "implemented_Fmix_LYP_H_atom": -0.49965546561594043,
+    "same_basis_one_electron_H_atom_for_FCI": -0.4998098113018428
+  },
+  "spline_minima": {
+    "implemented_Fmix_LYP": {
+      "R_A": 0.71175,
+      "depth_eV": 3.5775157995056586
+    },
+    "FCI": {
+      "R_A": 0.74266,
+      "depth_eV": 4.6998707967252225
+    }
+  },
+  "all_points_converged": true,
+  "maximum_spin_density_matrix_norm": 4.46197010518182e-13
+}

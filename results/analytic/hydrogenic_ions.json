@@ -1,0 +1,280 @@
+{
+  "definition": {
+    "unregularized_H_exact": "functional derivative of the unregularized GP93/PBE hydrogen-exact crossover in functional/hydrogen_exact.py on exact hydrogenic densities",
+    "regularized_Fmix": "final alpha- and log-density-windowed implementation evaluated on the same exact densities",
+    "PBE_X": "PBE exchange-only potential on the same exact densities"
+  },
+  "selected_parameters": {
+    "s0": 0.16,
+    "p": 8
+  },
+  "input_file": "inputs/hydrogenic.json",
+  "input_settings": {
+    "schema_version": 1,
+    "purpose": "Fixed-density hydrogenic-ion eigenvalue identities.",
+    "radial_integration": "SciPy Simpson integration on the finite scaled grid",
+    "radial_derivative": "SciPy CubicSpline derivative with default not-a-knot boundary condition",
+    "eigenvalue_evaluation": "-Z^2/2 plus the exact-density expectation value of v_H+v_x; not an SCF calculation",
+    "systems": [
+      {
+        "label": "H",
+        "nuclear_charge": 1
+      },
+      {
+        "label": "He+",
+        "nuclear_charge": 2
+      },
+      {
+        "label": "Li2+",
+        "nuclear_charge": 3
+      },
+      {
+        "label": "Be3+",
+        "nuclear_charge": 4
+      },
+      {
+        "label": "B4+",
+        "nuclear_charge": 5
+      }
+    ],
+    "scaled_radial_grid": {
+      "variable": "x=Zr",
+      "start": 0.002,
+      "stop": 30.0,
+      "step": 0.002
+    }
+  },
+  "radial_grid": {
+    "variable": "x=Zr",
+    "minimum": 0.002,
+    "maximum": 30.0,
+    "spacing": 0.002
+  },
+  "rows": [
+    {
+      "system": "H",
+      "Z": 1,
+      "method": "unregularized_H_exact",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695148,
+      "epsilon_1s_Ha": -0.4999999999894984,
+      "minus_epsilon_1s_Ha": 0.4999999999894984,
+      "exact_Z2_over_2_Ha": 0.5,
+      "signed_error_mHa": -1.0501599589929356e-08,
+      "absolute_error_mHa": 1.0501599589929356e-08,
+      "minus_epsilon_1s_eV": 13.605693122708237,
+      "hartree_plus_exchange_expectation_Ha": 1.0501579723098613e-11,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "H",
+      "Z": 1,
+      "method": "regularized_Fmix",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695148,
+      "epsilon_1s_Ha": -0.5000029744040755,
+      "minus_epsilon_1s_Ha": 0.5000029744040755,
+      "exact_Z2_over_2_Ha": 0.5,
+      "signed_error_mHa": 0.002974404075484216,
+      "absolute_error_mHa": 0.002974404075484216,
+      "minus_epsilon_1s_eV": 13.605774060652148,
+      "hartree_plus_exchange_expectation_Ha": -2.9744040754872073e-06,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "H",
+      "Z": 1,
+      "method": "PBE_X",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695148,
+      "epsilon_1s_Ha": -0.264891425018981,
+      "minus_epsilon_1s_Ha": 0.264891425018981,
+      "exact_Z2_over_2_Ha": 0.5,
+      "signed_error_mHa": -235.108574981019,
+      "absolute_error_mHa": 235.108574981019,
+      "minus_epsilon_1s_eV": 7.208062879441661,
+      "hartree_plus_exchange_expectation_Ha": 0.23510857498101898,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "He+",
+      "Z": 2,
+      "method": "unregularized_H_exact",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695148,
+      "epsilon_1s_Ha": -1.9999999999789966,
+      "minus_epsilon_1s_Ha": 1.9999999999789966,
+      "exact_Z2_over_2_Ha": 2.0,
+      "signed_error_mHa": -2.1003421224463636e-08,
+      "absolute_error_mHa": 2.1003421224463636e-08,
+      "minus_epsilon_1s_eV": 54.422772491404466,
+      "hartree_plus_exchange_expectation_Ha": 2.100347116613271e-11,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "He+",
+      "Z": 2,
+      "method": "regularized_Fmix",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695148,
+      "epsilon_1s_Ha": -2.0000009551073576,
+      "minus_epsilon_1s_Ha": 2.0000009551073576,
+      "exact_Z2_over_2_Ha": 2.0,
+      "signed_error_mHa": 0.0009551073576474778,
+      "absolute_error_mHa": 0.0009551073576474778,
+      "minus_epsilon_1s_eV": 54.42279848177121,
+      "hartree_plus_exchange_expectation_Ha": -9.55107357864281e-07,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "He+",
+      "Z": 2,
+      "method": "PBE_X",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695148,
+      "epsilon_1s_Ha": -1.5297828500379533,
+      "minus_epsilon_1s_Ha": 1.5297828500379533,
+      "exact_Z2_over_2_Ha": 2.0,
+      "signed_error_mHa": -470.2171499620467,
+      "absolute_error_mHa": 470.2171499620467,
+      "minus_epsilon_1s_eV": 41.627512004871086,
+      "hartree_plus_exchange_expectation_Ha": 0.4702171499620468,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "Li2+",
+      "Z": 3,
+      "method": "unregularized_H_exact",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695146,
+      "epsilon_1s_Ha": -4.4999999999684945,
+      "minus_epsilon_1s_Ha": 4.4999999999684945,
+      "exact_Z2_over_2_Ha": 4.5,
+      "signed_error_mHa": -3.150546490360284e-08,
+      "absolute_error_mHa": 3.150546490360284e-08,
+      "minus_epsilon_1s_eV": 122.45123810608868,
+      "hartree_plus_exchange_expectation_Ha": 3.1505550471310006e-11,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "Li2+",
+      "Z": 3,
+      "method": "regularized_Fmix",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695146,
+      "epsilon_1s_Ha": -4.500000481016717,
+      "minus_epsilon_1s_Ha": 4.500000481016717,
+      "exact_Z2_over_2_Ha": 4.5,
+      "signed_error_mHa": 0.00048101671712430516,
+      "absolute_error_mHa": 0.00048101671712430516,
+      "minus_epsilon_1s_eV": 122.45125119607768,
+      "hartree_plus_exchange_expectation_Ha": -4.810167169971998e-07,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "Li2+",
+      "Z": 3,
+      "method": "PBE_X",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695146,
+      "epsilon_1s_Ha": -3.794674275056929,
+      "minus_epsilon_1s_Ha": 3.794674275056929,
+      "exact_Z2_over_2_Ha": 4.5,
+      "signed_error_mHa": -705.3257249430711,
+      "absolute_error_mHa": 705.3257249430711,
+      "minus_epsilon_1s_eV": 103.2583473762886,
+      "hartree_plus_exchange_expectation_Ha": 0.7053257249430711,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "Be3+",
+      "Z": 4,
+      "method": "unregularized_H_exact",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695148,
+      "epsilon_1s_Ha": -7.999999999957993,
+      "minus_epsilon_1s_Ha": 7.999999999957993,
+      "exact_Z2_over_2_Ha": 8.0,
+      "signed_error_mHa": -4.200728653813712e-08,
+      "absolute_error_mHa": 4.200728653813712e-08,
+      "minus_epsilon_1s_eV": 217.69108996676093,
+      "hartree_plus_exchange_expectation_Ha": 4.200765110713855e-11,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "Be3+",
+      "Z": 4,
+      "method": "regularized_Fmix",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695148,
+      "epsilon_1s_Ha": -8.00000029146654,
+      "minus_epsilon_1s_Ha": 8.00000029146654,
+      "exact_Z2_over_2_Ha": 8.0,
+      "signed_error_mHa": 0.00029146653979239545,
+      "absolute_error_mHa": 0.00029146653979239545,
+      "minus_epsilon_1s_eV": 217.69109789911258,
+      "hartree_plus_exchange_expectation_Ha": -2.914665402564938e-07,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "Be3+",
+      "Z": 4,
+      "method": "PBE_X",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.9999999893695148,
+      "epsilon_1s_Ha": -7.059565700075905,
+      "minus_epsilon_1s_Ha": 7.059565700075905,
+      "exact_Z2_over_2_Ha": 8.0,
+      "signed_error_mHa": -940.4342999240951,
+      "absolute_error_mHa": 940.4342999240951,
+      "minus_epsilon_1s_eV": 192.1005689936941,
+      "hartree_plus_exchange_expectation_Ha": 0.9404342999240949,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "B4+",
+      "Z": 5,
+      "method": "unregularized_H_exact",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.999999989369515,
+      "epsilon_1s_Ha": -12.499999999947491,
+      "minus_epsilon_1s_Ha": 12.499999999947491,
+      "exact_Z2_over_2_Ha": 12.5,
+      "signed_error_mHa": -5.2509108172671404e-08,
+      "absolute_error_mHa": 5.2509108172671404e-08,
+      "minus_epsilon_1s_eV": 340.14232807342114,
+      "hartree_plus_exchange_expectation_Ha": 5.250961181022328e-11,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "B4+",
+      "Z": 5,
+      "method": "regularized_Fmix",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.999999989369515,
+      "epsilon_1s_Ha": -12.500000194859053,
+      "minus_epsilon_1s_Ha": 12.500000194859053,
+      "exact_Z2_over_2_Ha": 12.5,
+      "signed_error_mHa": 0.00019485905333738174,
+      "absolute_error_mHa": 0.00019485905333738174,
+      "minus_epsilon_1s_eV": 340.14233337723493,
+      "hartree_plus_exchange_expectation_Ha": -1.9485905375769283e-07,
+      "maximum_abs_vtau": 0.0
+    },
+    {
+      "system": "B4+",
+      "Z": 5,
+      "method": "PBE_X",
+      "density": "exact hydrogenic 1s",
+      "density_normalization": 0.999999989369515,
+      "epsilon_1s_Ha": -11.324457125094881,
+      "minus_epsilon_1s_Ha": 11.324457125094881,
+      "exact_Z2_over_2_Ha": 12.5,
+      "signed_error_mHa": -1175.542874905119,
+      "absolute_error_mHa": 1175.542874905119,
+      "minus_epsilon_1s_eV": 308.15417685708763,
+      "hartree_plus_exchange_expectation_Ha": 1.1755428749051189,
+      "maximum_abs_vtau": 0.0
+    }
+  ]
+}

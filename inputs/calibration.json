@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "purpose": "Select s0 by the five-system mean absolute HOMO ionization-energy error while p is fixed.",
+  "atomic_settings_file": "inputs/atomic.json",
+  "experimental_data_file": "data/experimental_ip.csv",
+  "systems": ["H", "He", "Li", "Na", "K"],
+  "p_fixed": 8,
+  "s0_values": [0.12, 0.14, 0.16, 0.18, 0.20, 0.22, 0.24, 0.28, 0.35],
+  "selection_metric": "mean absolute error of -epsilon_HOMO in eV",
+  "selection_rule": "minimum among points for which all five calculations converge"
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "purpose": "Common-density radial exchange-potential diagnostics for H, He, and Na.",
+  "reference_scf_conv_tol": 1e-11,
+  "reference_scf_max_cycle": 100,
+  "maximum_abs_iso_orbital_vtau": 1e-7,
+  "radial_derivative": "SciPy CubicSpline derivative with default not-a-knot boundary condition",
+  "hartree_integration": "cumulative trapezoidal integration on the finite hartree_grid_bohr interval",
+  "interpolation": "NumPy linear interpolation",
+  "systems": {
+    "H": {
+      "density": "exact hydrogen 1s",
+      "evaluation_grid_bohr": {"start": 0.15, "stop": 16.0, "points": 2600},
+      "reported_stop_bohr": 15.0,
+      "regularized_error_stop_bohr": 6.0
+    },
+    "He": {
+      "atom": "He 0 0 0",
+      "basis": "aug-cc-pv5z",
+      "charge": 0,
+      "spin_2S": 0,
+      "method": "RHF",
+      "hartree_grid_bohr": {"start": 0.03, "stop": 30.0, "points": 6000},
+      "reported_grid_bohr": {"start": 0.15, "stop": 3.3, "points": 900},
+      "density_threshold": 3e-5
+    },
+    "Na": {
+      "atom": "Na 0 0 0",
+      "basis": "sbkjc",
+      "ecp": "sbkjc",
+      "charge": 0,
+      "spin_2S": 1,
+      "method": "UHF",
+      "hartree_grid_bohr": {"start": 0.03, "stop": 30.0, "points": 6000},
+      "reported_grid_bohr": {"start": 3.2, "stop": 5.5, "points": 800},
+      "density_threshold": 1e-6
+    }
+  }
+}

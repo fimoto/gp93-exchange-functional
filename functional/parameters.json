@@ -1,0 +1,37 @@
+{
+  "selected_s0": 0.16,
+  "selected_p": 8,
+  "gp93_c0": 0.68928799,
+  "alpha_width": 0.10,
+  "density_window_high": 1.0e-6,
+  "density_window_low": 1.0e-12,
+  "spin_density_floor": 1.0e-13,
+  "sigma_floor": 1.0e-280,
+  "s_min": 1.2e-4,
+  "s_max": 2900.0,
+  "numerical_implementation": {
+    "gp93_quadrature_limit": 300,
+    "gp93_tail_endpoint": 40.0,
+    "cm_evaluation_endpoint": 60.0,
+    "frobenius_order": 60,
+    "w_spline": {
+      "z_min": -6.0,
+      "z_max": 30.0,
+      "points": 900,
+      "blend_center": 1.5,
+      "blend_width": 0.5,
+      "exact_branch_minimum_z": 0.3
+    },
+    "fmix_log_s_spline": {
+      "s_min": 1.0e-4,
+      "s_max": 3000.0,
+      "points": 8000
+    },
+    "switch_exponent_cap": 60.0,
+    "log_input_floor": 1.0e-12,
+    "density_floor": 1.0e-30,
+    "hydrogen_exact_s_floor": 1.0e-300,
+    "hydrogen_exact_density_floor": 1.0e-200,
+    "hydrogen_exact_sigma_floor": 1.0e-300
+  }
+}

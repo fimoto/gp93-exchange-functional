@@ -1,0 +1,1759 @@
+{
+  "schema_version": 1,
+  "input_file": "inputs/calibration.json",
+  "input_settings": {
+    "schema_version": 1,
+    "purpose": "Select s0 by the five-system mean absolute HOMO ionization-energy error while p is fixed.",
+    "atomic_settings_file": "inputs/atomic.json",
+    "experimental_data_file": "data/experimental_ip.csv",
+    "systems": [
+      "H",
+      "He",
+      "Li",
+      "Na",
+      "K"
+    ],
+    "p_fixed": 8,
+    "s0_values": [
+      0.12,
+      0.14,
+      0.16,
+      0.18,
+      0.2,
+      0.22,
+      0.24,
+      0.28,
+      0.35
+    ],
+    "selection_metric": "mean absolute error of -epsilon_HOMO in eV",
+    "selection_rule": "minimum among points for which all five calculations converge"
+  },
+  "atomic_input_settings": {
+    "schema_version": 1,
+    "purpose": "Matched exchange-only atomic calculations and diffuse negative-energy virtual-state analysis.",
+    "experimental_data_file": "data/experimental_ip.csv",
+    "coordinate_unit": "Angstrom",
+    "grid_level": 6,
+    "final_conv_tol": 1e-09,
+    "initial_hf": {
+      "conv_tol": 1e-11,
+      "max_cycle": 200
+    },
+    "dft_initial_max_cycle": 200,
+    "one_electron_initial_stage": [
+      {
+        "damping": 0.3,
+        "level_shift_ha": 0.4,
+        "conv_tol": 1e-08,
+        "max_cycle": 120
+      }
+    ],
+    "many_electron_scf_stages": [
+      {
+        "damping": 0.3,
+        "level_shift_ha": 0.4,
+        "conv_tol": 1e-08,
+        "max_cycle": 180
+      },
+      {
+        "damping": 0.1,
+        "level_shift_ha": 0.15,
+        "conv_tol": 1e-08,
+        "max_cycle": 180
+      },
+      {
+        "damping": 0.0,
+        "level_shift_ha": 0.05,
+        "conv_tol": 1e-09,
+        "max_cycle": 220
+      },
+      {
+        "damping": 0.0,
+        "level_shift_ha": 0.0,
+        "conv_tol": 1e-09,
+        "max_cycle": 300
+      }
+    ],
+    "newton_fallback": {
+      "conv_tol": 1e-09,
+      "max_cycle": 100,
+      "level_shift_ha": 0.0
+    },
+    "one_electron_optimizer": {
+      "method": "L-BFGS-B",
+      "gtol": 1e-09,
+      "ftol": 1e-14,
+      "maxiter": 600,
+      "maxls": 60,
+      "residual_tolerance": 1e-05,
+      "occupied_overlap_tolerance": 1e-08,
+      "orbital_subspace": "s-type atomic orbitals"
+    },
+    "negative_virtual_threshold_ha": 0.0,
+    "occupation_threshold": 1e-08,
+    "degeneracy_tolerance_ha": 2e-05,
+    "negative_virtual_definition": "occupation <= occupation_threshold and orbital energy < negative_virtual_threshold_ha",
+    "degeneracy_grouping": "energy-sorted states within degeneracy_tolerance_ha of the first state in the current group",
+    "systems": [
+      {
+        "name": "H",
+        "atom": "H 0 0 0",
+        "basis": "aug-cc-pv5z",
+        "ecp": null,
+        "charge": 0,
+        "spin_2S": 1,
+        "method": "UKS"
+      },
+      {
+        "name": "He",
+        "atom": "He 0 0 0",
+        "basis": "aug-cc-pv5z",
+        "ecp": null,
+        "charge": 0,
+        "spin_2S": 0,
+        "method": "RKS"
+      },
+      {
+        "name": "Li",
+        "atom": "Li 0 0 0",
+        "basis": "crenbl",
+        "ecp": "crenbl",
+        "charge": 0,
+        "spin_2S": 1,
+        "method": "UKS"
+      },
+      {
+        "name": "Na",
+        "atom": "Na 0 0 0",
+        "basis": "sbkjc",
+        "ecp": "sbkjc",
+        "charge": 0,
+        "spin_2S": 1,
+        "method": "UKS"
+      },
+      {
+        "name": "K",
+        "atom": "K 0 0 0",
+        "basis": "sbkjc",
+        "ecp": "sbkjc",
+        "charge": 0,
+        "spin_2S": 1,
+        "method": "UKS"
+      }
+    ],
+    "functionals": [
+      {
+        "name": "PBE_X",
+        "label": "PBE exchange-only",
+        "xc_code": "GGA_X_PBE",
+        "kind": "builtin"
+      },
+      {
+        "name": "SCAN_X",
+        "label": "SCAN exchange-only",
+        "xc_code": "MGGA_X_SCAN",
+        "kind": "builtin"
+      },
+      {
+        "name": "Fmix_X",
+        "label": "$F_{\\mathrm{mix}}$ exchange-only",
+        "xc_code": null,
+        "kind": "fmix"
+      }
+    ],
+    "he_basis_sensitivity": {
+      "even_tempered_parent_basis": "aug-cc-pv5z",
+      "generated_exponent_rule": "alpha_new = alpha_most_diffuse^2 / alpha_next_diffuse for each angular momentum; contraction coefficient 1",
+      "entries": [
+        {
+          "label": "aug-cc-pVTZ",
+          "basis": "aug-cc-pvtz",
+          "add_even_tempered": false
+        },
+        {
+          "label": "aug-cc-pVQZ",
+          "basis": "aug-cc-pvqz",
+          "add_even_tempered": false
+        },
+        {
+          "label": "aug-cc-pV5Z",
+          "basis": "aug-cc-pv5z",
+          "add_even_tempered": false
+        },
+        {
+          "label": "aug-cc-pV5Z+ET1",
+          "basis": "aug-cc-pv5z",
+          "add_even_tempered": true
+        }
+      ]
+    }
+  },
+  "environment": {
+    "python": "3.12.13",
+    "machine": "x86_64",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "matplotlib": "3.10.8",
+    "pyscf": "2.14.0",
+    "libxc": "7.0.0",
+    "working_directory": ".",
+    "script": "calculations/calibration/run_calibration.py",
+    "source_directory": "functional",
+    "thread_environment": {
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    },
+    "source_files": [
+      "functional/mgga_fmix.py",
+      "functional/fmix.py",
+      "functional/gp93_w.py",
+      "functional/parameters.json",
+      "inputs/calibration.json",
+      "inputs/atomic.json"
+    ]
+  },
+  "method": {
+    "input_file": "inputs/calibration.json",
+    "atomic_settings_file": "inputs/atomic.json",
+    "p": 8,
+    "p_role": "fixed design choice; not fitted in this scan",
+    "fitted_parameter": "s0",
+    "s0_values": [
+      0.12,
+      0.14,
+      0.16,
+      0.18,
+      0.2,
+      0.22,
+      0.24,
+      0.28,
+      0.35
+    ],
+    "hartree_to_eV": 27.211386245988,
+    "grid_level": 6,
+    "conv_tol": 1e-09,
+    "aggregation_rule": "mae_5system_eV is present only if all H, He, Li, Na, and K calculations converged; no failed system is excluded",
+    "homo_definition": "maximum eigenvalue among orbitals with mo_occ > 0, preserving the occupation mask rather than flatten-and-index counting",
+    "one_electron_initial_stage": [
+      {
+        "damping": 0.3,
+        "level_shift_ha": 0.4,
+        "conv_tol": 1e-08,
+        "max_cycle": 120
+      }
+    ],
+    "many_electron_scf_stages": [
+      {
+        "damping": 0.3,
+        "level_shift_ha": 0.4,
+        "conv_tol": 1e-08,
+        "max_cycle": 180
+      },
+      {
+        "damping": 0.1,
+        "level_shift_ha": 0.15,
+        "conv_tol": 1e-08,
+        "max_cycle": 180
+      },
+      {
+        "damping": 0.0,
+        "level_shift_ha": 0.05,
+        "conv_tol": 1e-09,
+        "max_cycle": 220
+      },
+      {
+        "damping": 0.0,
+        "level_shift_ha": 0.0,
+        "conv_tol": 1e-09,
+        "max_cycle": 300
+      }
+    ],
+    "one_electron_optimizer": {
+      "method": "L-BFGS-B",
+      "gtol": 1e-09,
+      "ftol": 1e-14,
+      "maxiter": 600,
+      "maxls": 60,
+      "residual_tolerance": 1e-05,
+      "occupied_overlap_tolerance": 1e-08,
+      "orbital_subspace": "s-type atomic orbitals"
+    },
+    "one_electron_protocol": "H, Li/CRENBL, Na/SBKJC, and K/SBKJC use the same s-symmetric direct occupied-orbital minimization after the zero-level-shift stage"
+  },
+  "systems": [
+    {
+      "symbol": "H",
+      "basis": "aug-cc-pv5z",
+      "ecp": null,
+      "spin": 1,
+      "experimental_ip_eV": 13.598434599702
+    },
+    {
+      "symbol": "He",
+      "basis": "aug-cc-pv5z",
+      "ecp": null,
+      "spin": 0,
+      "experimental_ip_eV": 24.587389011
+    },
+    {
+      "symbol": "Li",
+      "basis": "crenbl",
+      "ecp": "crenbl",
+      "spin": 1,
+      "experimental_ip_eV": 5.391714996
+    },
+    {
+      "symbol": "Na",
+      "basis": "sbkjc",
+      "ecp": "sbkjc",
+      "spin": 1,
+      "experimental_ip_eV": 5.13907696
+    },
+    {
+      "symbol": "K",
+      "basis": "sbkjc",
+      "ecp": "sbkjc",
+      "spin": 1,
+      "experimental_ip_eV": 4.34066373
+    }
+  ],
+  "reference_hf": {
+    "H": {
+      "converged": true,
+      "total_energy_Ha": -0.4999947845837091
+    },
+    "He": {
+      "converged": true,
+      "total_energy_Ha": -2.861626929245821
+    },
+    "Li": {
+      "converged": true,
+      "total_energy_Ha": -0.19644679656202993
+    },
+    "Na": {
+      "converged": true,
+      "total_energy_Ha": -0.18159791181539092
+    },
+    "K": {
+      "converged": true,
+      "total_energy_Ha": -0.1474912790024206
+    }
+  },
+  "scan": [
+    {
+      "s0": 0.12,
+      "p": 8,
+      "n_converged": 5,
+      "all_five_converged": true,
+      "mae_5system_eV": 0.7910418058123584,
+      "failed_systems": [],
+      "systems": [
+        {
+          "symbol": "H",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 1,
+          "experimental_ip_eV": 13.598434599702,
+          "calculated_ip_eV": 13.605492140671949,
+          "absolute_error_eV": 0.007057540969949372,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.5000135088037441
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 11,
+              "total_energy_Ha": -0.5000135088390476,
+              "orbital_residual_norm": 7.700935313143285e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "He",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 0,
+          "experimental_ip_eV": 24.587389011,
+          "calculated_ip_eV": 25.115131751289052,
+          "absolute_error_eV": 0.5277427402890531,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -2.859301958503909
+            },
+            {
+              "label": "damp=0.1, level_shift=0.15, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8593019585063946
+            },
+            {
+              "label": "damp=0.0, level_shift=0.05, conv_tol=1e-09, max_cycle=220",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859301958506404
+            },
+            {
+              "label": "damp=0.0, level_shift=0.0, conv_tol=1e-09, max_cycle=300",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8593019585064035
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Li",
+          "basis": "crenbl",
+          "ecp": "crenbl",
+          "spin": 1,
+          "experimental_ip_eV": 5.391714996,
+          "calculated_ip_eV": 4.356572904200575,
+          "absolute_error_eV": 1.0351420917994254,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 7,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": false,
+              "cycles": 120,
+              "total_energy_Ha": 1.806550256803247
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 20,
+              "total_energy_Ha": -0.16915212091337897,
+              "orbital_residual_norm": 5.099338151846534e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Na",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 5.13907696,
+          "calculated_ip_eV": 3.9714250431675215,
+          "absolute_error_eV": 1.1676519168324782,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 14,
+              "total_energy_Ha": -0.15143293653371487
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 3,
+              "total_energy_Ha": -0.15143294109030714,
+              "orbital_residual_norm": 4.9267956048117016e-15
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "K",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 4.34066373,
+          "calculated_ip_eV": 3.123048990829114,
+          "absolute_error_eV": 1.217614739170886,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 26,
+              "total_energy_Ha": -0.11930643901433041
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 3,
+              "total_energy_Ha": -0.11930644118615666,
+              "orbital_residual_norm": 1.026711309540783e-13
+            }
+          ],
+          "exception": null
+        }
+      ]
+    },
+    {
+      "s0": 0.14,
+      "p": 8,
+      "n_converged": 5,
+      "all_five_converged": true,
+      "mae_5system_eV": 0.7908933802022788,
+      "failed_systems": [],
+      "systems": [
+        {
+          "symbol": "H",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 1,
+          "experimental_ip_eV": 13.598434599702,
+          "calculated_ip_eV": 13.605492082526546,
+          "absolute_error_eV": 0.007057482824546213,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.5000134586474094
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 11,
+              "total_energy_Ha": -0.5000134586824247,
+              "orbital_residual_norm": 3.482982371761629e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "He",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 0,
+          "experimental_ip_eV": 24.587389011,
+          "calculated_ip_eV": 25.11513194730627,
+          "absolute_error_eV": 0.5277429363062716,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -2.85930169355904
+            },
+            {
+              "label": "damp=0.1, level_shift=0.15, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8593016935615188
+            },
+            {
+              "label": "damp=0.0, level_shift=0.05, conv_tol=1e-09, max_cycle=220",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8593016935615303
+            },
+            {
+              "label": "damp=0.0, level_shift=0.0, conv_tol=1e-09, max_cycle=300",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.85930169356153
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Li",
+          "basis": "crenbl",
+          "ecp": "crenbl",
+          "spin": 1,
+          "experimental_ip_eV": 5.391714996,
+          "calculated_ip_eV": 4.347022541480647,
+          "absolute_error_eV": 1.0446924545193532,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 7,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": false,
+              "cycles": 120,
+              "total_energy_Ha": -0.17594080462002437
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 17,
+              "total_energy_Ha": -0.1688205280378708,
+              "orbital_residual_norm": 1.4820908840342176e-07
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Na",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 5.13907696,
+          "calculated_ip_eV": 3.9822482283076814,
+          "absolute_error_eV": 1.1568287316923183,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 19,
+              "total_energy_Ha": -0.15123646803966825
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.1512364687107855,
+              "orbital_residual_norm": 1.6793460899268553e-10
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "K",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 4.34066373,
+          "calculated_ip_eV": 3.1225184343310954,
+          "absolute_error_eV": 1.2181452956689047,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 24,
+              "total_energy_Ha": -0.11916511188981324
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 3,
+              "total_energy_Ha": -0.11916511294639649,
+              "orbital_residual_norm": 2.4949165435987745e-14
+            }
+          ],
+          "exception": null
+        }
+      ]
+    },
+    {
+      "s0": 0.16,
+      "p": 8,
+      "n_converged": 5,
+      "all_five_converged": true,
+      "mae_5system_eV": 0.789593652786932,
+      "failed_systems": [],
+      "systems": [
+        {
+          "symbol": "H",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 1,
+          "experimental_ip_eV": 13.598434599702,
+          "calculated_ip_eV": 13.605475233362691,
+          "absolute_error_eV": 0.007040633660691853,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.5000132664840007
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 12,
+              "total_energy_Ha": -0.5000132665201271,
+              "orbital_residual_norm": 8.843647333737999e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "He",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 0,
+          "experimental_ip_eV": 24.587389011,
+          "calculated_ip_eV": 25.115125680755412,
+          "absolute_error_eV": 0.5277366697554129,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -2.85930138303541
+            },
+            {
+              "label": "damp=0.1, level_shift=0.15, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8593013830378964
+            },
+            {
+              "label": "damp=0.0, level_shift=0.05, conv_tol=1e-09, max_cycle=220",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859301383037904
+            },
+            {
+              "label": "damp=0.0, level_shift=0.0, conv_tol=1e-09, max_cycle=300",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8593013830379053
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Li",
+          "basis": "crenbl",
+          "ecp": "crenbl",
+          "spin": 1,
+          "experimental_ip_eV": 5.391714996,
+          "calculated_ip_eV": 4.352407146378913,
+          "absolute_error_eV": 1.0393078496210872,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 7,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 17,
+              "total_energy_Ha": -0.1685322039176928
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 12,
+              "total_energy_Ha": -0.1685322764636386,
+              "orbital_residual_norm": 2.177541927975972e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Na",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 5.13907696,
+          "calculated_ip_eV": 3.98995232802753,
+          "absolute_error_eV": 1.1491246319724695,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 19,
+              "total_energy_Ha": -0.15104024672924696
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.15104024698521337,
+              "orbital_residual_norm": 7.385295623954551e-12
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "K",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 4.34066373,
+          "calculated_ip_eV": 3.1159052510750014,
+          "absolute_error_eV": 1.2247584789249988,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 28,
+              "total_energy_Ha": -0.11889154237902283
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 3,
+              "total_energy_Ha": -0.11889154951177258,
+              "orbital_residual_norm": 4.9279404274371357e-14
+            }
+          ],
+          "exception": null
+        }
+      ]
+    },
+    {
+      "s0": 0.18,
+      "p": 8,
+      "n_converged": 5,
+      "all_five_converged": true,
+      "mae_5system_eV": 0.8101168737308271,
+      "failed_systems": [],
+      "systems": [
+        {
+          "symbol": "H",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 1,
+          "experimental_ip_eV": 13.598434599702,
+          "calculated_ip_eV": 13.605458467232356,
+          "absolute_error_eV": 0.0070238675303571085,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.5000129035823542
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 13,
+              "total_energy_Ha": -0.5000129036184946,
+              "orbital_residual_norm": 1.640033925935971e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "He",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 0,
+          "experimental_ip_eV": 24.587389011,
+          "calculated_ip_eV": 25.11508702383756,
+          "absolute_error_eV": 0.5276980128375612,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -2.859300188861749
+            },
+            {
+              "label": "damp=0.1, level_shift=0.15, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859300188864237
+            },
+            {
+              "label": "damp=0.0, level_shift=0.05, conv_tol=1e-09, max_cycle=220",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859300188864244
+            },
+            {
+              "label": "damp=0.0, level_shift=0.0, conv_tol=1e-09, max_cycle=300",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859300188864242
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Li",
+          "basis": "crenbl",
+          "ecp": "crenbl",
+          "spin": 1,
+          "experimental_ip_eV": 5.391714996,
+          "calculated_ip_eV": 4.312639205961633,
+          "absolute_error_eV": 1.0790757900383667,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 7,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": false,
+              "cycles": 120,
+              "total_energy_Ha": 2.843187746691015
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 20,
+              "total_energy_Ha": -0.16791042890730074,
+              "orbital_residual_norm": 3.1838169245816126e-09
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Na",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 5.13907696,
+          "calculated_ip_eV": 3.9565076981703418,
+          "absolute_error_eV": 1.182569261829658,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 17,
+              "total_energy_Ha": -0.15068031198006965
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.15068031278791547,
+              "orbital_residual_norm": 4.516156341078163e-11
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "K",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 4.34066373,
+          "calculated_ip_eV": 3.0864462935818073,
+          "absolute_error_eV": 1.2542174364181928,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 34,
+              "total_energy_Ha": -0.11841945719613024
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.118419457868424,
+              "orbital_residual_norm": 3.713296578106265e-11
+            }
+          ],
+          "exception": null
+        }
+      ]
+    },
+    {
+      "s0": 0.2,
+      "p": 8,
+      "n_converged": 5,
+      "all_five_converged": true,
+      "mae_5system_eV": 0.8303100766021891,
+      "failed_systems": [],
+      "systems": [
+        {
+          "symbol": "H",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 1,
+          "experimental_ip_eV": 13.598434599702,
+          "calculated_ip_eV": 13.605416915160518,
+          "absolute_error_eV": 0.006982315458518684,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.5000123664857812
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 13,
+              "total_energy_Ha": -0.5000123665248218,
+              "orbital_residual_norm": 4.240970642359785e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "He",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 0,
+          "experimental_ip_eV": 24.587389011,
+          "calculated_ip_eV": 25.11506835049662,
+          "absolute_error_eV": 0.5276793394966219,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -2.859298435101652
+            },
+            {
+              "label": "damp=0.1, level_shift=0.15, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859298435104132
+            },
+            {
+              "label": "damp=0.0, level_shift=0.05, conv_tol=1e-09, max_cycle=220",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592984351041437
+            },
+            {
+              "label": "damp=0.0, level_shift=0.0, conv_tol=1e-09, max_cycle=300",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592984351041424
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Li",
+          "basis": "crenbl",
+          "ecp": "crenbl",
+          "spin": 1,
+          "experimental_ip_eV": 5.391714996,
+          "calculated_ip_eV": 4.262933469543849,
+          "absolute_error_eV": 1.1287815264561507,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 7,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": false,
+              "cycles": 120,
+              "total_energy_Ha": 38.46574282979174
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 20,
+              "total_energy_Ha": -0.16713959897466793,
+              "orbital_residual_norm": 1.50814965106184e-10
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Na",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 5.13907696,
+          "calculated_ip_eV": 3.925084902027338,
+          "absolute_error_eV": 1.2139920579726615,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 13,
+              "total_energy_Ha": -0.15006613856545248
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.15006614060333195,
+              "orbital_residual_norm": 2.0117067953696497e-10
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "K",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 4.34066373,
+          "calculated_ip_eV": 3.0665485863730075,
+          "absolute_error_eV": 1.2741151436269926,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 30,
+              "total_energy_Ha": -0.11785109113011785
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 3,
+              "total_energy_Ha": -0.1178510958513393,
+              "orbital_residual_norm": 1.2820177677975753e-13
+            }
+          ],
+          "exception": null
+        }
+      ]
+    },
+    {
+      "s0": 0.22,
+      "p": 8,
+      "n_converged": 5,
+      "all_five_converged": true,
+      "mae_5system_eV": 0.8467954205879507,
+      "failed_systems": [],
+      "systems": [
+        {
+          "symbol": "H",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 1,
+          "experimental_ip_eV": 13.598434599702,
+          "calculated_ip_eV": 13.605367708829466,
+          "absolute_error_eV": 0.006933109127466253,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.5000115242225058
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 12,
+              "total_energy_Ha": -0.5000115242637025,
+              "orbital_residual_norm": 3.2924912682817678e-09
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "He",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 0,
+          "experimental_ip_eV": 24.587389011,
+          "calculated_ip_eV": 25.115024905623752,
+          "absolute_error_eV": 0.5276358946237529,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -2.859296618616915
+            },
+            {
+              "label": "damp=0.1, level_shift=0.15, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592966186194047
+            },
+            {
+              "label": "damp=0.0, level_shift=0.05, conv_tol=1e-09, max_cycle=220",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859296618619414
+            },
+            {
+              "label": "damp=0.0, level_shift=0.0, conv_tol=1e-09, max_cycle=300",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592966186194158
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Li",
+          "basis": "crenbl",
+          "ecp": "crenbl",
+          "spin": 1,
+          "experimental_ip_eV": 5.391714996,
+          "calculated_ip_eV": 4.23754975695982,
+          "absolute_error_eV": 1.1541652390401804,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 7,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 23,
+              "total_energy_Ha": -0.1662972295604464
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 11,
+              "total_energy_Ha": -0.16629725563007802,
+              "orbital_residual_norm": 2.8787990698676062e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Na",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 5.13907696,
+          "calculated_ip_eV": 3.893872724529108,
+          "absolute_error_eV": 1.2452042354708919,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 16,
+              "total_energy_Ha": -0.14937651498830298
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.1493765183156222,
+              "orbital_residual_norm": 2.018572648362517e-10
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "K",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 4.34066373,
+          "calculated_ip_eV": 3.0406251053225386,
+          "absolute_error_eV": 1.3000386246774616,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 28,
+              "total_energy_Ha": -0.1172711329991304
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.11727114133028943,
+              "orbital_residual_norm": 1.1082803343653506e-10
+            }
+          ],
+          "exception": null
+        }
+      ]
+    },
+    {
+      "s0": 0.24,
+      "p": 8,
+      "n_converged": 5,
+      "all_five_converged": true,
+      "mae_5system_eV": 0.8757481917478411,
+      "failed_systems": [],
+      "systems": [
+        {
+          "symbol": "H",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 1,
+          "experimental_ip_eV": 13.598434599702,
+          "calculated_ip_eV": 13.60529180583388,
+          "absolute_error_eV": 0.006857206131881455,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.5000104350279172
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 13,
+              "total_energy_Ha": -0.5000104350758929,
+              "orbital_residual_norm": 3.093550753093974e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "He",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 0,
+          "experimental_ip_eV": 24.587389011,
+          "calculated_ip_eV": 25.114927848996196,
+          "absolute_error_eV": 0.5275388379961967,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -2.8592933153776947
+            },
+            {
+              "label": "damp=0.1, level_shift=0.15, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592933153801847
+            },
+            {
+              "label": "damp=0.0, level_shift=0.05, conv_tol=1e-09, max_cycle=220",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592933153801967
+            },
+            {
+              "label": "damp=0.0, level_shift=0.0, conv_tol=1e-09, max_cycle=300",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859293315380195
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Li",
+          "basis": "crenbl",
+          "ecp": "crenbl",
+          "spin": 1,
+          "experimental_ip_eV": 5.391714996,
+          "calculated_ip_eV": 4.1838749385055065,
+          "absolute_error_eV": 1.2078400574944936,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 7,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 12,
+              "total_energy_Ha": -0.16531261321591084
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 9,
+              "total_energy_Ha": -0.1653126235370789,
+              "orbital_residual_norm": 2.7803032198501367e-09
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Na",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 5.13907696,
+          "calculated_ip_eV": 3.846737686674282,
+          "absolute_error_eV": 1.2923392733257177,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 19,
+              "total_energy_Ha": -0.1485583292171193
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.14855833013134367,
+              "orbital_residual_norm": 5.4220667728339404e-11
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "K",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 4.34066373,
+          "calculated_ip_eV": 2.9964981462090843,
+          "absolute_error_eV": 1.3441655837909159,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 31,
+              "total_energy_Ha": -0.11655406250730484
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.11655406708733862,
+              "orbital_residual_norm": 1.0211949239907601e-10
+            }
+          ],
+          "exception": null
+        }
+      ]
+    },
+    {
+      "s0": 0.28,
+      "p": 8,
+      "n_converged": 5,
+      "all_five_converged": true,
+      "mae_5system_eV": 0.9216178619685571,
+      "failed_systems": [],
+      "systems": [
+        {
+          "symbol": "H",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 1,
+          "experimental_ip_eV": 13.598434599702,
+          "calculated_ip_eV": 13.60503987041154,
+          "absolute_error_eV": 0.006605270709540534,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.5000068293387687
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 11,
+              "total_energy_Ha": -0.5000068294235169,
+              "orbital_residual_norm": 9.98907318599199e-09
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "He",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 0,
+          "experimental_ip_eV": 24.587389011,
+          "calculated_ip_eV": 25.114740709054402,
+          "absolute_error_eV": 0.5273516980544031,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -2.8592840292405235
+            },
+            {
+              "label": "damp=0.1, level_shift=0.15, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592840292430255
+            },
+            {
+              "label": "damp=0.0, level_shift=0.05, conv_tol=1e-09, max_cycle=220",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592840292430317
+            },
+            {
+              "label": "damp=0.0, level_shift=0.0, conv_tol=1e-09, max_cycle=300",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859284029243034
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Li",
+          "basis": "crenbl",
+          "ecp": "crenbl",
+          "spin": 1,
+          "experimental_ip_eV": 5.391714996,
+          "calculated_ip_eV": 4.080890150134865,
+          "absolute_error_eV": 1.3108248458651355,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 7,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 13,
+              "total_energy_Ha": -0.16313648251531843
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 9,
+              "total_energy_Ha": -0.1631365585847774,
+              "orbital_residual_norm": 4.056408194130251e-09
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Na",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 5.13907696,
+          "calculated_ip_eV": 3.7828683089046153,
+          "absolute_error_eV": 1.3562086510953844,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 16,
+              "total_energy_Ha": -0.1468782719388338
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.1468782739473407,
+              "orbital_residual_norm": 1.5471657704095833e-10
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "K",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 4.34066373,
+          "calculated_ip_eV": 2.9335648858816774,
+          "absolute_error_eV": 1.4070988441183228,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 32,
+              "total_energy_Ha": -0.11502246643239311
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 3,
+              "total_energy_Ha": -0.11502247160057925,
+              "orbital_residual_norm": 8.952613340506745e-10
+            }
+          ],
+          "exception": null
+        }
+      ]
+    },
+    {
+      "s0": 0.35,
+      "p": 8,
+      "n_converged": 5,
+      "all_five_converged": true,
+      "mae_5system_eV": 1.0284569991588624,
+      "failed_systems": [],
+      "systems": [
+        {
+          "symbol": "H",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 1,
+          "experimental_ip_eV": 13.598434599702,
+          "calculated_ip_eV": 13.58325463666638,
+          "absolute_error_eV": 0.015179963035619082,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 10,
+              "total_energy_Ha": -0.4998815047574466
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -0.49988150476136817,
+              "orbital_residual_norm": 3.650540770023369e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "He",
+          "basis": "aug-cc-pv5z",
+          "ecp": null,
+          "spin": 0,
+          "experimental_ip_eV": 24.587389011,
+          "calculated_ip_eV": 25.111285531389978,
+          "absolute_error_eV": 0.5238965203899788,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 4,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 4,
+              "total_energy_Ha": -2.8592296318268517
+            },
+            {
+              "label": "damp=0.1, level_shift=0.15, conv_tol=1e-08, max_cycle=180",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592296318306225
+            },
+            {
+              "label": "damp=0.0, level_shift=0.05, conv_tol=1e-09, max_cycle=220",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.8592296318306443
+            },
+            {
+              "label": "damp=0.0, level_shift=0.0, conv_tol=1e-09, max_cycle=300",
+              "converged": true,
+              "cycles": 1,
+              "total_energy_Ha": -2.859229631830644
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Li",
+          "basis": "crenbl",
+          "ecp": "crenbl",
+          "spin": 1,
+          "experimental_ip_eV": 5.391714996,
+          "calculated_ip_eV": 3.865084188012672,
+          "absolute_error_eV": 1.526630807987328,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 7,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 15,
+              "total_energy_Ha": -0.15873048334382528
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 9,
+              "total_energy_Ha": -0.1587306114262952,
+              "orbital_residual_norm": 1.3643068595957274e-08
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "Na",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 5.13907696,
+          "calculated_ip_eV": 3.613233885483766,
+          "absolute_error_eV": 1.5258430745162337,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 18,
+              "total_energy_Ha": -0.14350731637617842
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 2,
+              "total_energy_Ha": -0.1435073190820812,
+              "orbital_residual_norm": 1.2409445011216443e-10
+            }
+          ],
+          "exception": null
+        },
+        {
+          "symbol": "K",
+          "basis": "sbkjc",
+          "ecp": "sbkjc",
+          "spin": 1,
+          "experimental_ip_eV": 4.34066373,
+          "calculated_ip_eV": 2.789929100134848,
+          "absolute_error_eV": 1.5507346298651523,
+          "converged": true,
+          "negative_virtual_spin_orbitals": 6,
+          "attempts": [
+            {
+              "label": "damp=0.3, level_shift=0.4, conv_tol=1e-08, max_cycle=120",
+              "converged": true,
+              "cycles": 32,
+              "total_energy_Ha": -0.11205312200282974
+            },
+            {
+              "label": "s-symmetric direct one-electron minimization",
+              "converged": true,
+              "cycles": 3,
+              "total_energy_Ha": -0.11205313071304666,
+              "orbital_residual_norm": 7.858283230364845e-10
+            }
+          ],
+          "exception": null
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "status": "complete",
+    "n_valid_points": 9,
+    "n_missing_points": 0,
+    "minimum_valid_point": {
+      "s0": 0.16,
+      "p": 8,
+      "mae_5system_eV": 0.789593652786932
+    }
+  }
+}

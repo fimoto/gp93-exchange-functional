@@ -1,0 +1,5 @@
+basis,generated_even_tempered,nao,converged,minus_homo_ev,negative_virtual_spatial_count,unique_negative_groups,group_energies_ha,group_degeneracies,group_l_symbols,group_r_rms_bohr
+aug-cc-pVTZ,False,23,True,25.12319942664153,1,1,-0.1466501488,1,s,4.33224066
+aug-cc-pVQZ,False,46,True,25.115556413260165,4,2,-0.1543937569;-0.0146679928,1;3,s;p,4.51563746;2.76211432
+aug-cc-pV5Z,False,80,True,25.115125680755412,4,2,-0.1473498695;-0.0384480926,1;3,s;p,4.58323101;2.97304637
+aug-cc-pV5Z+ET1,True,105,True,25.115071335649706,4,2,-0.1471313180;-0.1160995331,1;3,s;p,4.84145078;4.97443084

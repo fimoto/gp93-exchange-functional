@@ -1,0 +1,98 @@
+{
+  "definition": "self-consistent unregularized hydrogen-exact GGA; no density window, iso-orbital gate, or upper large-gradient cutoff",
+  "input_file": "inputs/hydrogen_exact_scf.json",
+  "input_settings": {
+    "schema_version": 1,
+    "purpose": "Self-consistent H calculation with the unregularized hydrogen-exact crossover.",
+    "experimental_data_file": "data/experimental_ip.csv",
+    "atom": "H 0 0 0",
+    "coordinate_unit": "Angstrom",
+    "basis": "aug-cc-pv5z",
+    "charge": 0,
+    "spin_2S": 1,
+    "grid_level": 6,
+    "occupation_threshold": 0.0,
+    "negative_virtual_threshold_ha": 0.0,
+    "initial_uhf": {
+      "conv_tol": 1e-11,
+      "max_cycle": 200
+    },
+    "scf_stages": [
+      {
+        "damping": 0.3,
+        "level_shift_ha": 0.4,
+        "conv_tol": 1e-08,
+        "max_cycle": 120
+      },
+      {
+        "damping": 0.1,
+        "level_shift_ha": 0.15,
+        "conv_tol": 1e-08,
+        "max_cycle": 180
+      },
+      {
+        "damping": 0.0,
+        "level_shift_ha": 0.05,
+        "conv_tol": 1e-09,
+        "max_cycle": 220
+      },
+      {
+        "damping": 0.0,
+        "level_shift_ha": 0.0,
+        "conv_tol": 1e-09,
+        "max_cycle": 300
+      }
+    ]
+  },
+  "numerical_floor_only": true,
+  "selected_parameters": {
+    "s0": 0.16,
+    "p": 8
+  },
+  "stages": [
+    {
+      "damping": 0.3,
+      "level_shift_ha": 0.4,
+      "conv_tol": 1e-08,
+      "max_cycle": 120,
+      "converged": true
+    },
+    {
+      "damping": 0.1,
+      "level_shift_ha": 0.15,
+      "conv_tol": 1e-08,
+      "max_cycle": 180,
+      "converged": true
+    },
+    {
+      "damping": 0.0,
+      "level_shift_ha": 0.05,
+      "conv_tol": 1e-09,
+      "max_cycle": 220,
+      "converged": true
+    },
+    {
+      "damping": 0.0,
+      "level_shift_ha": 0.0,
+      "conv_tol": 1e-09,
+      "max_cycle": 300,
+      "converged": true
+    }
+  ],
+  "result": {
+    "system": "H",
+    "functional": "unregularized_hydrogen_exact",
+    "basis": "aug-cc-pv5z",
+    "grid_level": 6,
+    "converged": true,
+    "final_damping": 0.0,
+    "final_level_shift_ha": 0.0,
+    "total_energy_ha": -0.4999896692273001,
+    "homo_ha": -0.4999856469493971,
+    "minus_homo_ev": 13.605302556590237,
+    "experimental_ip_ev": 13.598434599702,
+    "absolute_error_ev": 0.006867956888237714,
+    "negative_virtual_alpha_count": 4,
+    "negative_virtual_beta_count": 0
+  }
+}

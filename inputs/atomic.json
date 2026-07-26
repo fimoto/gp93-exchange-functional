@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "purpose": "Matched exchange-only atomic calculations and diffuse negative-energy virtual-state analysis.",
+  "experimental_data_file": "data/experimental_ip.csv",
+  "coordinate_unit": "Angstrom",
+  "grid_level": 6,
+  "final_conv_tol": 1e-9,
+  "initial_hf": {"conv_tol": 1e-11, "max_cycle": 200},
+  "dft_initial_max_cycle": 200,
+  "one_electron_initial_stage": [
+    {"damping": 0.30, "level_shift_ha": 0.40, "conv_tol": 1e-8, "max_cycle": 120}
+  ],
+  "many_electron_scf_stages": [
+    {"damping": 0.30, "level_shift_ha": 0.40, "conv_tol": 1e-8, "max_cycle": 180},
+    {"damping": 0.10, "level_shift_ha": 0.15, "conv_tol": 1e-8, "max_cycle": 180},
+    {"damping": 0.00, "level_shift_ha": 0.05, "conv_tol": 1e-9, "max_cycle": 220},
+    {"damping": 0.00, "level_shift_ha": 0.00, "conv_tol": 1e-9, "max_cycle": 300}
+  ],
+  "newton_fallback": {"conv_tol": 1e-9, "max_cycle": 100, "level_shift_ha": 0.0},
+  "one_electron_optimizer": {
+    "method": "L-BFGS-B",
+    "gtol": 1e-9,
+    "ftol": 1e-14,
+    "maxiter": 600,
+    "maxls": 60,
+    "residual_tolerance": 1e-5,
+    "occupied_overlap_tolerance": 1e-8,
+    "orbital_subspace": "s-type atomic orbitals"
+  },
+  "negative_virtual_threshold_ha": 0.0,
+  "occupation_threshold": 1e-8,
+  "degeneracy_tolerance_ha": 2e-5,
+  "negative_virtual_definition": "occupation <= occupation_threshold and orbital energy < negative_virtual_threshold_ha",
+  "degeneracy_grouping": "energy-sorted states within degeneracy_tolerance_ha of the first state in the current group",
+  "systems": [
+    {"name": "H", "atom": "H 0 0 0", "basis": "aug-cc-pv5z", "ecp": null, "charge": 0, "spin_2S": 1, "method": "UKS"},
+    {"name": "He", "atom": "He 0 0 0", "basis": "aug-cc-pv5z", "ecp": null, "charge": 0, "spin_2S": 0, "method": "RKS"},
+    {"name": "Li", "atom": "Li 0 0 0", "basis": "crenbl", "ecp": "crenbl", "charge": 0, "spin_2S": 1, "method": "UKS"},
+    {"name": "Na", "atom": "Na 0 0 0", "basis": "sbkjc", "ecp": "sbkjc", "charge": 0, "spin_2S": 1, "method": "UKS"},
+    {"name": "K", "atom": "K 0 0 0", "basis": "sbkjc", "ecp": "sbkjc", "charge": 0, "spin_2S": 1, "method": "UKS"}
+  ],
+  "functionals": [
+    {"name": "PBE_X", "label": "PBE exchange-only", "xc_code": "GGA_X_PBE", "kind": "builtin"},
+    {"name": "SCAN_X", "label": "SCAN exchange-only", "xc_code": "MGGA_X_SCAN", "kind": "builtin"},
+    {"name": "Fmix_X", "label": "$F_{\\mathrm{mix}}$ exchange-only", "xc_code": null, "kind": "fmix"}
+  ],
+  "he_basis_sensitivity": {
+    "even_tempered_parent_basis": "aug-cc-pv5z",
+    "generated_exponent_rule": "alpha_new = alpha_most_diffuse^2 / alpha_next_diffuse for each angular momentum; contraction coefficient 1",
+    "entries": [
+      {"label": "aug-cc-pVTZ", "basis": "aug-cc-pvtz", "add_even_tempered": false},
+      {"label": "aug-cc-pVQZ", "basis": "aug-cc-pvqz", "add_even_tempered": false},
+      {"label": "aug-cc-pV5Z", "basis": "aug-cc-pv5z", "add_even_tempered": false},
+      {"label": "aug-cc-pV5Z+ET1", "basis": "aug-cc-pv5z", "add_even_tempered": true}
+    ]
+  }
+}

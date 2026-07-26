@@ -1,0 +1,6 @@
+system,ionization_energy_eV,uncertainty_eV,source,source_version,access_date
+H,13.598434599702,0.000000000012,NIST Atomic Spectra Database,5.12,2026-07-24
+He,24.587389011,0.000000025,NIST Atomic Spectra Database,5.12,2026-07-24
+Li,5.391714996,0.000000022,NIST Atomic Spectra Database,5.12,2026-07-24
+Na,5.13907696,0.00000025,NIST Atomic Spectra Database,5.12,2026-07-24
+K,4.34066373,0.00000009,NIST Atomic Spectra Database,5.12,2026-07-24

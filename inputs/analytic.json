@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "purpose": "Analytic GP93 continuation, derivative checks, and exact-H local-potential diagnostics.",
+  "gp93_analytic_exact_to_z": 12.0,
+  "enhancement_grid": {
+    "log10_s_min": -3.0,
+    "log10_s_max": 5.0,
+    "points": 1401
+  },
+  "w_figure_grids": {
+    "series": {"start": -6.0, "stop": 2.5, "points": 300},
+    "exact": {"start": 0.05, "stop": 14.0, "points": 320},
+    "asymptotic": {"start": 1.0, "stop": 30.0, "points": 350},
+    "source_comparison": {"start": -6.0, "stop": 30.0, "points": 500}
+  },
+  "hydrogen_potential_grid": {
+    "evaluation_start_bohr": 0.05,
+    "evaluation_stop_bohr": 15.02,
+    "step_bohr": 0.002,
+    "reported_start_bohr": 0.2,
+    "reported_stop_bohr": 15.0
+  },
+  "radial_convergence_steps_bohr": [0.02, 0.01, 0.005, 0.002, 0.001],
+  "bare_potential_error_range_bohr": [0.3, 14.5],
+  "regularized_intermediate_range_bohr": [0.3, 6.0],
+  "regularization_transition_check_range_bohr": [6.0, 14.0],
+  "derivative_checks": {
+    "direct_fmix_s_excluding_selected_s0": [0.03, 0.05, 1.0, 100.0, 1000.0],
+    "direct_fmix_relative_step": 1e-6,
+    "direct_fmix_absolute_step_min": 1e-8,
+    "fmix_spline_s_excluding_selected_s0": [0.00012, 0.05, 1.0, 100.0, 1000.0, 2900.0],
+    "descriptor_clip_s": [0.00001, 10000.0],
+    "density_window_spin_density": [1e-6, 1e-8, 1e-10, 1e-12],
+    "density_window_log_step": 1e-5,
+    "exact_h_radius_bohr": [6.0, 8.0, 10.0, 12.0, 13.5],
+    "local_radius_guard_bohr": 0.001,
+    "relative_finite_difference_step": 1e-5,
+    "nonzero_alpha_relative_finite_difference_step": 1e-6,
+    "nonzero_alpha_samples": [
+      {"spin_density": 1e-4, "reduced_gradient": 0.5, "alpha": 0.05},
+      {"spin_density": 1e-8, "reduced_gradient": 0.8, "alpha": 0.08}
+    ],
+    "radial_potential_sample_r_bohr": [6.0, 8.0, 10.0, 12.0, 13.5]
+  },
+  "radial_derivative": "nonuniform three-point finite difference; one-sided at the complete-grid endpoints",
+  "enhancement_interpolation": "SciPy CubicSpline with default not-a-knot boundary condition"
+}

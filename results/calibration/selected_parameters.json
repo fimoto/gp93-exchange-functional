@@ -1,0 +1,8 @@
+{
+  "s0": 0.16,
+  "p": 8,
+  "mae_5system_eV": 0.789593652786932,
+  "p_role": "fixed design choice",
+  "fitted_parameter": "s0",
+  "selection_rule": "with p fixed, minimum five-system MAE over s0 points for which every calculation converged under the common protocol"
+}

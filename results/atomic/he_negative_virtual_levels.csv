@@ -1,0 +1,3 @@
+system,functional,method,count_kind,group_index,energy_ha,energy_ev,spatial_degeneracy,l_est,l_symbol,l_confidence,n_eff,r_rms_bohr
+He,Fmix_X,RKS,spatial orbitals counted once,1,-0.14734986946255635,-4.009594211241533,1,0,s,0.9999999999995205,1.8420869439666523,4.583231009635204
+He,Fmix_X,RKS,spatial orbitals counted once,2,-0.03844809255911525,-1.0462258970475822,3,1,p,0.9999999999998135,3.606181679335823,2.9730463672471408

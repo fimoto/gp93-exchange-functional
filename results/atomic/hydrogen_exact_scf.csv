@@ -1,0 +1,2 @@
+system,functional,basis,grid_level,converged,final_damping,final_level_shift_ha,total_energy_ha,homo_ha,minus_homo_ev,experimental_ip_ev,absolute_error_ev,negative_virtual_alpha_count,negative_virtual_beta_count
+H,unregularized_hydrogen_exact,aug-cc-pv5z,6,True,0.0,0.0,-0.4999896692273001,-0.4999856469493971,13.605302556590237,13.598434599702,0.006867956888237714,4,0

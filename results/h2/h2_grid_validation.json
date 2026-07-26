@@ -1,0 +1,35 @@
+{
+  "input_file": "inputs/h2.json",
+  "input_settings": {
+    "grid_levels": [
+      5,
+      6
+    ],
+    "bond_lengths_angstrom": [
+      0.7,
+      0.72,
+      0.74
+    ]
+  },
+  "selected_parameters": {
+    "s0": 0.16,
+    "p": 8
+  },
+  "grid_levels": [
+    5,
+    6
+  ],
+  "R_A": [
+    0.7,
+    0.72,
+    0.74
+  ],
+  "all_points_converged": true,
+  "maximum_spin_density_matrix_norm": 7.079453219905497e-14,
+  "level6_minus_level5_eV": {
+    "0.7": -0.0012687497545225135,
+    "0.72": -0.0012957890553315643,
+    "0.74": -0.001191869285166014
+  },
+  "maximum_absolute_difference_eV": 0.0012957890553315643
+}

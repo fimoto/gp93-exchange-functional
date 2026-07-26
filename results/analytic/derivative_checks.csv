@@ -1,0 +1,66 @@
+check_type,point,code_or_analytic,finite_difference_or_reference,abs_error,rel_error,note
+dFmix_direct/ds,0.03,0.011155621140951096,0.011155624572249206,3.4312981102291307e-09,3.0758458103411325e-07,includes chi derivative and mathematical derivative of z clip
+dFmix_direct/ds,0.05,-0.08795372839091133,-0.0879537298548172,1.4639058715237852e-09,1.6644045385456813e-08,includes chi derivative and mathematical derivative of z clip
+dFmix_direct/ds,0.16,17.64770950224964,17.64770950277161,5.219717991167272e-10,2.95773113805364e-11,includes chi derivative and mathematical derivative of z clip
+dFmix_direct/ds,1.0,-2.5955279155939923,-2.5955279155942534,2.611244553918368e-13,1.0060552761654718e-13,includes chi derivative and mathematical derivative of z clip
+dFmix_direct/ds,100.0,-12.112980771074861,-12.112980770666583,4.0827785596775357e-10,3.3705812275596015e-11,includes chi derivative and mathematical derivative of z clip
+dFmix_direct/ds,1000.0,-15.995867280702216,-15.995867280253151,4.490647853572227e-10,2.807380040587014e-11,includes chi derivative and mathematical derivative of z clip
+dFmix_spline/ds,0.00012,5.2681832955697607e-05,5.2682525009118e-05,6.920534203957106e-10,1.31362993758544e-05,same log-s CubicSpline and chain rule as mgga_fmix.py
+dFmix_spline/ds,0.05,-0.08795312282453716,-0.08795312333989089,5.15353731911361e-10,5.8594136551558234e-09,same log-s CubicSpline and chain rule as mgga_fmix.py
+dFmix_spline/ds,0.16,17.6477086478146,17.647708641526208,6.288392029318857e-09,3.563290937544789e-10,same log-s CubicSpline and chain rule as mgga_fmix.py
+dFmix_spline/ds,1.0,-2.5955279145181764,-2.595527914664497,1.4632073330744788e-10,5.637417054185741e-11,same log-s CubicSpline and chain rule as mgga_fmix.py
+dFmix_spline/ds,100.0,-12.11298077245811,-12.112980767990736,4.467374026262405e-09,3.688088101667012e-10,same log-s CubicSpline and chain rule as mgga_fmix.py
+dFmix_spline/ds,1000.0,-15.995867281348636,-15.995867277902919,3.4457166009360662e-09,2.154129276224873e-10,same log-s CubicSpline and chain rule as mgga_fmix.py
+dFmix_spline/ds,2900.0,-17.670899710763308,-17.670899711914902,1.1515943754147884e-09,6.516897238901233e-11,same log-s CubicSpline and chain rule as mgga_fmix.py
+descriptor_clip_derivative,1e-05,0.0,0.0,0.0,0.0,canonical implementation sets the derivative of a clipped descriptor to zero outside the active interval
+descriptor_clip_derivative,10000.0,0.0,0.0,0.0,0.0,canonical implementation sets the derivative of a clipped descriptor to zero outside the active interval
+d_density_window/dlogn,1e-06,0.0,7.85871367980917e-08,7.85871367980917e-08,1.0,cubic smoothstep in log density; dX/dlog(n) vanishes at endpoints
+d_density_window/dlogn,1e-08,0.09650988486738928,0.0965098848781931,1.0803830052807939e-11,1.1194532110823312e-10,cubic smoothstep in log density; dX/dlog(n) vanishes at endpoints
+d_density_window/dlogn,1e-10,0.0965098848673893,0.09650988486431532,3.0739855105821334e-12,3.1851509457357496e-11,cubic smoothstep in log density; dX/dlog(n) vanishes at endpoints
+d_density_window/dlogn,1e-12,0.0,7.85881691639535e-08,7.85881691639535e-08,1.0,cubic smoothstep in log density; dX/dlog(n) vanishes at endpoints
+implemented_vrho_vs_energy_FD,6.0,-0.6866651618811939,-0.6866651618871076,5.913713962968359e-12,8.612223673494904e-12,partial derivative with respect to input spin density at fixed sigma; alpha=0
+implemented_vsigma_vs_energy_FD,6.0,139845.688623489,139845.6886224337,1.055304892361164e-06,7.546209702627266e-12,partial derivative with respect to input sigma at fixed density; alpha=0
+implemented_vrho_vs_energy_FD,8.0,-0.34257791932654524,-0.34257791934563453,1.9089285707707404e-11,5.572246379501125e-11,partial derivative with respect to input spin density at fixed sigma; alpha=0
+implemented_vsigma_vs_energy_FD,8.0,8296129.143959735,8296129.143326193,0.0006335414946079254,7.63659151893984e-11,partial derivative with respect to input sigma at fixed density; alpha=0
+implemented_vrho_vs_energy_FD,10.0,0.05603464625836779,0.05603464625897203,6.042388811522414e-13,1.0783308568767726e-11,partial derivative with respect to input spin density at fixed sigma; alpha=0
+implemented_vsigma_vs_energy_FD,10.0,289053276.50036573,289053276.5127913,0.012425541877746582,4.298703003007379e-11,partial derivative with respect to input sigma at fixed density; alpha=0
+implemented_vrho_vs_energy_FD,12.0,0.17598062545367243,0.17598062545099566,2.676775467946868e-12,1.5210625948431688e-11,partial derivative with respect to input spin density at fixed sigma; alpha=0
+implemented_vsigma_vs_energy_FD,12.0,3435069080.8261075,3435069080.5598345,0.26627302169799805,7.751606021092346e-11,partial derivative with respect to input sigma at fixed density; alpha=0
+implemented_vrho_vs_energy_FD,13.5,0.0,0.0,0.0,0.0,partial derivative with respect to input spin density at fixed sigma; alpha=0
+implemented_vsigma_vs_energy_FD,13.5,0.0,0.0,0.0,0.0,partial derivative with respect to input sigma at fixed density; alpha=0
+implemented_nonzero_alpha_vrho_vs_energy_FD,1,-0.007570584084780799,-0.007570584089499786,4.718987353657944e-12,6.233320042244909e-10,"partial derivative with respect to n at fixed other descriptors; alpha=0.05, n=1e-04"
+implemented_nonzero_alpha_vsigma_vs_energy_FD,1,-43270.704670578634,-43270.70467192357,1.3449389371089637e-06,3.108197445144993e-11,"partial derivative with respect to sigma at fixed other descriptors; alpha=0.05, n=1e-04"
+implemented_nonzero_alpha_vtau_vs_energy_FD,1,36.29398900281627,36.29398899972395,3.092317513164744e-09,8.520191905400072e-11,"partial derivative with respect to tau at fixed other descriptors; alpha=0.05, n=1e-04"
+implemented_nonzero_alpha_vrho_vs_energy_FD,2,0.0012567560899114224,0.0012567560894937227,4.1769972897176544e-13,3.323634015580584e-10,"partial derivative with respect to n at fixed other descriptors; alpha=0.08, n=1e-08"
+implemented_nonzero_alpha_vsigma_vs_energy_FD,2,-3668542703.8534455,-3668542703.7892585,0.06418704986572266,1.7496606976470638e-11,"partial derivative with respect to sigma at fixed other descriptors; alpha=0.08, n=1e-08"
+implemented_nonzero_alpha_vtau_vs_energy_FD,2,316.55555179129317,316.55555179641806,5.124888957652729e-09,1.618954059901823e-11,"partial derivative with respect to tau at fixed other descriptors; alpha=0.08, n=1e-08"
+bare_potential_max_abs_error,h=0.02,0.0002571675659590045,0.0,0.0002571675659590045,1.0,max over r=0.3..14.5 versus exact -r v_x=r v_H
+bare_potential_max_abs_error,h=0.01,6.67710680411493e-05,0.0,6.67710680411493e-05,1.0,max over r=0.3..14.5 versus exact -r v_x=r v_H
+bare_potential_max_abs_error,h=0.005,2.194996421966966e-05,0.0,2.194996421966966e-05,1.0,max over r=0.3..14.5 versus exact -r v_x=r v_H
+bare_potential_max_abs_error,h=0.002,2.4435134537537095e-05,0.0,2.4435134537537095e-05,1.0,max over r=0.3..14.5 versus exact -r v_x=r v_H
+bare_potential_max_abs_error,h=0.001,2.5613414226022257e-05,0.0,2.5613414226022257e-05,1.0,max over r=0.3..14.5 versus exact -r v_x=r v_H
+implemented_potential_grid_convergence,r=6; h=0.02,0.9999478919129164,0.9999552267629828,7.3348500663206195e-06,7.335178486005537e-06,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=8; h=0.02,1.1527839134442501,1.1527420488195834,4.1864624666709815e-05,3.631610762300461e-05,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=10; h=0.02,0.9243870133520641,0.9244046059614206,1.7592609356520406e-05,1.903128699604794e-05,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=12; h=0.02,0.3977650819435752,0.3978891021800203,0.0001240202364451437,0.0003116954844092015,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=13.5; h=0.02,0.0,0.0,0.0,0.0,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=6; h=0.01,0.9999526152120964,0.9999552267629828,2.611550886322256e-06,2.611667819144533e-06,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=8; h=0.01,1.1527541115162658,1.1527420488195834,1.2062696682413332e-05,1.0464240866204122e-05,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=10; h=0.01,0.9244009515300363,0.9244046059614206,3.6544313842812315e-06,3.953281237148819e-06,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=12; h=0.01,0.3978586743028041,0.3978891021800203,3.0427877216243626e-05,7.647326114118322e-05,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=13.5; h=0.01,0.0,0.0,0.0,0.0,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=6; h=0.005,0.9999542086399821,0.9999552267629828,1.01812300068449e-06,1.0181685873879766e-06,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=8; h=0.005,1.1527452893579162,1.1527420488195834,3.2405383327827053e-06,2.8111486229431467e-06,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=10; h=0.005,0.9244034801925974,0.9244046059614206,1.1257688231625096e-06,1.2178312569003932e-06,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=12; h=0.005,0.3978817295481356,0.3978891021800203,7.372631884716707e-06,1.852936369536717e-05,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=13.5; h=0.005,0.0,0.0,0.0,0.0,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=6; h=0.002,0.99995452188519,0.9999552267629828,7.048777928009287e-07,7.049093538745054e-07,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=8; h=0.002,1.1527428931777546,1.1527420488195834,8.443581711592429e-07,7.324774467545052e-07,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=10; h=0.002,0.9244041079786955,0.9244046059614206,4.979827250561897e-07,5.387064515307842e-07,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=12; h=0.002,0.3978881812508031,0.3978891021800203,9.209292172185357e-07,2.3145374230477718e-06,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=13.5; h=0.002,0.0,0.0,0.0,0.0,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=6; h=0.001,0.9999552267629828,0.9999552267629828,0.0,0.0,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=8; h=0.001,1.1527420488195834,1.1527420488195834,0.0,0.0,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=10; h=0.001,0.9244046059614206,0.9244046059614206,0.0,0.0,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=12; h=0.001,0.3978891021800203,0.3978891021800203,0.0,0.0,reference is the h=0.001 radial-divergence evaluation
+implemented_potential_grid_convergence,r=13.5; h=0.001,0.0,0.0,0.0,0.0,reference is the h=0.001 radial-divergence evaluation

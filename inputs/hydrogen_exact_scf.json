@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "purpose": "Self-consistent H calculation with the unregularized hydrogen-exact crossover.",
+  "experimental_data_file": "data/experimental_ip.csv",
+  "atom": "H 0 0 0",
+  "coordinate_unit": "Angstrom",
+  "basis": "aug-cc-pv5z",
+  "charge": 0,
+  "spin_2S": 1,
+  "grid_level": 6,
+  "occupation_threshold": 0.0,
+  "negative_virtual_threshold_ha": 0.0,
+  "initial_uhf": {"conv_tol": 1e-11, "max_cycle": 200},
+  "scf_stages": [
+    {"damping": 0.30, "level_shift_ha": 0.40, "conv_tol": 1e-8, "max_cycle": 120},
+    {"damping": 0.10, "level_shift_ha": 0.15, "conv_tol": 1e-8, "max_cycle": 180},
+    {"damping": 0.00, "level_shift_ha": 0.05, "conv_tol": 1e-9, "max_cycle": 220},
+    {"damping": 0.00, "level_shift_ha": 0.00, "conv_tol": 1e-9, "max_cycle": 300}
+  ]
+}

@@ -1,0 +1,170 @@
+{
+  "functional_parameters": {
+    "alpha_width": 0.1,
+    "density_window_high": 1e-06,
+    "density_window_low": 1e-12,
+    "gp93_c0": 0.68928799,
+    "numerical_implementation": {
+      "cm_evaluation_endpoint": 60.0,
+      "density_floor": 1e-30,
+      "fmix_log_s_spline": {
+        "points": 8000,
+        "s_max": 3000.0,
+        "s_min": 0.0001
+      },
+      "frobenius_order": 60,
+      "gp93_quadrature_limit": 300,
+      "gp93_tail_endpoint": 40.0,
+      "hydrogen_exact_density_floor": 1e-200,
+      "hydrogen_exact_s_floor": 1e-300,
+      "hydrogen_exact_sigma_floor": 1e-300,
+      "log_input_floor": 1e-12,
+      "switch_exponent_cap": 60.0,
+      "w_spline": {
+        "blend_center": 1.5,
+        "blend_width": 0.5,
+        "exact_branch_minimum_z": 0.3,
+        "points": 900,
+        "z_max": 30.0,
+        "z_min": -6.0
+      }
+    },
+    "s_max": 2900.0,
+    "s_min": 0.00012,
+    "selected_p": 8,
+    "selected_s0": 0.16,
+    "sigma_floor": 1e-280,
+    "spin_density_floor": 1e-13
+  },
+  "functional_parameters_file": "functional/parameters.json",
+  "input_file": "inputs/analytic.json",
+  "input_settings": {
+    "bare_potential_error_range_bohr": [
+      0.3,
+      14.5
+    ],
+    "derivative_checks": {
+      "density_window_log_step": 1e-05,
+      "density_window_spin_density": [
+        1e-06,
+        1e-08,
+        1e-10,
+        1e-12
+      ],
+      "descriptor_clip_s": [
+        1e-05,
+        10000.0
+      ],
+      "direct_fmix_absolute_step_min": 1e-08,
+      "direct_fmix_relative_step": 1e-06,
+      "direct_fmix_s_excluding_selected_s0": [
+        0.03,
+        0.05,
+        1.0,
+        100.0,
+        1000.0
+      ],
+      "exact_h_radius_bohr": [
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        13.5
+      ],
+      "fmix_spline_s_excluding_selected_s0": [
+        0.00012,
+        0.05,
+        1.0,
+        100.0,
+        1000.0,
+        2900.0
+      ],
+      "local_radius_guard_bohr": 0.001,
+      "nonzero_alpha_relative_finite_difference_step": 1e-06,
+      "nonzero_alpha_samples": [
+        {
+          "alpha": 0.05,
+          "reduced_gradient": 0.5,
+          "spin_density": 0.0001
+        },
+        {
+          "alpha": 0.08,
+          "reduced_gradient": 0.8,
+          "spin_density": 1e-08
+        }
+      ],
+      "radial_potential_sample_r_bohr": [
+        6.0,
+        8.0,
+        10.0,
+        12.0,
+        13.5
+      ],
+      "relative_finite_difference_step": 1e-05
+    },
+    "enhancement_grid": {
+      "log10_s_max": 5.0,
+      "log10_s_min": -3.0,
+      "points": 1401
+    },
+    "enhancement_interpolation": "SciPy CubicSpline with default not-a-knot boundary condition",
+    "gp93_analytic_exact_to_z": 12.0,
+    "hydrogen_potential_grid": {
+      "evaluation_start_bohr": 0.05,
+      "evaluation_stop_bohr": 15.02,
+      "reported_start_bohr": 0.2,
+      "reported_stop_bohr": 15.0,
+      "step_bohr": 0.002
+    },
+    "purpose": "Analytic GP93 continuation, derivative checks, and exact-H local-potential diagnostics.",
+    "radial_convergence_steps_bohr": [
+      0.02,
+      0.01,
+      0.005,
+      0.002,
+      0.001
+    ],
+    "radial_derivative": "nonuniform three-point finite difference; one-sided at the complete-grid endpoints",
+    "regularization_transition_check_range_bohr": [
+      6.0,
+      14.0
+    ],
+    "regularized_intermediate_range_bohr": [
+      0.3,
+      6.0
+    ],
+    "schema_version": 1,
+    "w_figure_grids": {
+      "asymptotic": {
+        "points": 350,
+        "start": 1.0,
+        "stop": 30.0
+      },
+      "exact": {
+        "points": 320,
+        "start": 0.05,
+        "stop": 14.0
+      },
+      "series": {
+        "points": 300,
+        "start": -6.0,
+        "stop": 2.5
+      },
+      "source_comparison": {
+        "points": 500,
+        "start": -6.0,
+        "stop": 30.0
+      }
+    }
+  },
+  "outputs": [
+    "gp93_building_block.csv",
+    "hydrogen_regularization.csv",
+    "derivative_checks.csv",
+    "DERIVATION_NOTES.md"
+  ],
+  "selected_parameters": {
+    "p": 8,
+    "s0": 0.16
+  }
+}

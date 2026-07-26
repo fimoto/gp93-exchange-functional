@@ -1,0 +1,111 @@
+{
+  "input_file": "inputs/potentials.json",
+  "input_settings": {
+    "schema_version": 1,
+    "purpose": "Common-density radial exchange-potential diagnostics for H, He, and Na.",
+    "reference_scf_conv_tol": 1e-11,
+    "reference_scf_max_cycle": 100,
+    "maximum_abs_iso_orbital_vtau": 1e-07,
+    "radial_derivative": "SciPy CubicSpline derivative with default not-a-knot boundary condition",
+    "hartree_integration": "cumulative trapezoidal integration on the finite hartree_grid_bohr interval",
+    "interpolation": "NumPy linear interpolation",
+    "systems": {
+      "H": {
+        "density": "exact hydrogen 1s",
+        "evaluation_grid_bohr": {
+          "start": 0.15,
+          "stop": 16.0,
+          "points": 2600
+        },
+        "reported_stop_bohr": 15.0,
+        "regularized_error_stop_bohr": 6.0
+      },
+      "He": {
+        "atom": "He 0 0 0",
+        "basis": "aug-cc-pv5z",
+        "charge": 0,
+        "spin_2S": 0,
+        "method": "RHF",
+        "hartree_grid_bohr": {
+          "start": 0.03,
+          "stop": 30.0,
+          "points": 6000
+        },
+        "reported_grid_bohr": {
+          "start": 0.15,
+          "stop": 3.3,
+          "points": 900
+        },
+        "density_threshold": 3e-05
+      },
+      "Na": {
+        "atom": "Na 0 0 0",
+        "basis": "sbkjc",
+        "ecp": "sbkjc",
+        "charge": 0,
+        "spin_2S": 1,
+        "method": "UHF",
+        "hartree_grid_bohr": {
+          "start": 0.03,
+          "stop": 30.0,
+          "points": 6000
+        },
+        "reported_grid_bohr": {
+          "start": 3.2,
+          "stop": 5.5,
+          "points": 800
+        },
+        "density_threshold": 1e-06
+      }
+    }
+  },
+  "selected_parameters": {
+    "s0": 0.16,
+    "p": 8
+  },
+  "functional": "regularized mgga_fmix implementation, exchange-only",
+  "hydrogen_design_reference": "analytic hydrogen-exact GP93 identity on the exact H density",
+  "includes_log_density_window_Xn": true,
+  "includes_s_and_z_clipping": true,
+  "s0": 0.16,
+  "p": 8,
+  "comparison": "PBE exchange-only",
+  "systems": {
+    "H": {
+      "density": "exact",
+      "range_bohr": [
+        0.15,
+        15.0
+      ],
+      "maximum_abs_error_regularized_through_6_bohr": 2.205374342945099e-05
+    },
+    "He": {
+      "basis": "aug-cc-pv5z",
+      "common_density": "RHF",
+      "range_bohr": [
+        0.15,
+        3.3
+      ],
+      "reference_converged": true,
+      "reference_energy_Ha": -2.861626929245821,
+      "mean_abs_error_minus_r_vx": {
+        "regularized_Fmix": 0.03461976123684493,
+        "PBE_X": 0.5115196299231951
+      }
+    },
+    "Na": {
+      "basis_ecp": "sbkjc/sbkjc",
+      "common_density": "UHF one-electron 3s",
+      "range_bohr": [
+        3.2,
+        5.5
+      ],
+      "reference_converged": true,
+      "reference_energy_Ha": -0.18159791181539092,
+      "mean_abs_error_minus_r_vx": {
+        "regularized_Fmix": 0.12526734389346716,
+        "PBE_X": 0.3613659255603984
+      }
+    }
+  }
+}

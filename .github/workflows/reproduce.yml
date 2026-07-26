@@ -1,0 +1,52 @@
+name: reproduce
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      full_recalculation:
+        description: "Recompute every electronic-structure result"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  validate-checked-results:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.13"
+          cache: pip
+      - run: pip install -r requirements-lock.txt
+      - run: python reproduce.py --stage postprocess
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gp93-checked-results
+          path: |
+            results/
+            figures/
+
+  full-recalculation:
+    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.full_recalculation) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.13"
+          cache: pip
+      - run: pip install -r requirements-lock.txt
+      - run: python reproduce.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gp93-reproduced-results
+          path: |
+            results/
+            figures/
