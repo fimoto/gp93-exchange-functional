@@ -89,6 +89,10 @@ def main() -> None:
             "results/radial/radial_summary.csv",
             "results/radial/radial_levels.csv",
             "results/radial/radial_metadata.json",
+            "inputs/radial_variants.json",
+            "results/radial/radial_variants_summary.csv",
+            "results/radial/radial_variants_levels.csv",
+            "results/radial/radial_variants_metadata.json",
         )
     )
     selected = load_json("calibration/selected_parameters.json")
@@ -581,6 +585,41 @@ def main() -> None:
         require(abs(float(radial[(system, "GP93_X")]["minus_homo_ev"])
                     - float(pyscf_row["minus_homo_ev"])) < 1e-3,
                 f"radial and PySCF GP93 HOMO differ for {system}")
+
+    # Radial ablation of GP93R and CAP exchange.
+    variants_input = json.loads((ROOT / "inputs" / "radial_variants.json").read_text(encoding="utf-8"))
+    variants_meta = load_json("radial/radial_variants_metadata.json")
+    require(variants_meta["input_settings"] == variants_input,
+            "radial-variant results do not match the current input deck")
+    require(variants_meta["gga_self_check_max_abs_dv_ha"] < 1e-10,
+            "analytic GGA channel disagrees with the canonical PBE path")
+    variants = {(row["system"], row["functional"]): row
+                for row in rows("radial/radial_variants_summary.csv")}
+    require(len(variants) == 6, "radial-variant summary is incomplete")
+    for key, row in variants.items():
+        require(float(row["max_level_change_mixing_ha"]) < 1e-5,
+                f"radial-variant levels depend on mixing for {key}")
+        if key[1] != "CAP_X":
+            require(float(row["max_level_change_grid_ha"]) < 1e-4,
+                    f"radial-variant levels depend on the grid for {key}")
+    variant_levels = rows("radial/radial_variants_levels.csv")
+    base_levels = rows("radial/radial_levels.csv")
+
+    def level(table, system, functional, label):
+        return next(float(row["energy_ha"]) for row in table
+                    if row["system"] == system and row["functional"] == functional
+                    and row["label"] == label)
+
+    for label in ("2s", "2p"):
+        require(abs(level(variant_levels, "He", "GP93R_CURV_X", label)
+                    - level(base_levels, "He", "GP93_X", label)) < 1e-3,
+                f"curvature-only He {label} level departs from GP93-x")
+        require(abs(level(variant_levels, "He", "GP93R_WIN_X", label)
+                    - level(base_levels, "He", "GP93R_X", label)) < 1e-3,
+                f"window-only He {label} level departs from GP93R-x")
+    require(max(float(row["energy_ha"]) for row in variant_levels
+                if row["functional"] == "CAP_X" and row["above_reported_threshold"] == "False")
+            < 0.0, "CAP level bookkeeping failed")
 
     expected_figures = (
         "fig_gp93_building_block.png",
