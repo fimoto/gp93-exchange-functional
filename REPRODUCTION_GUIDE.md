@@ -489,6 +489,23 @@ the remaining residual sits at \(r<10^{-3}\) bohr, and
 `max_level_change_mixing_ha` shows that the levels do not depend on it.
 This stage takes about an hour on one core.
 
+## 10d. Stage 12 — radial ablation of GP93R and CAP exchange
+
+Scientific question: which of the two GP93R changes, the bounded curvature or
+the narrower density window, moves the bound levels, and what does a GGA whose
+potential decays as \(-1/r\) (CAP) give on the same radial grid?
+
+```bash
+python -m json.tool inputs/radial_variants.json
+python calculations/radial/run_radial_variants.py
+cat results/radial/radial_variants_summary.csv
+cat results/radial/radial_variants_levels.csv
+```
+
+Check `gga_self_check_max_abs_dv_ha` in the metadata (below \(10^{-10}\) Ha)
+and the mixing and grid checks in the summary. This stage takes about half an
+hour on one core.
+
 ## 11. Paper-table reconstruction
 
 The five tables require no generated intermediate. Their numerical sources

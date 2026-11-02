@@ -28,6 +28,7 @@ canonical CSV files; there is no table-export or document-build stage.
 | He with hybrids | `inputs/he_hybrids.json` | `python calculations/atomic/run_he_hybrids.py` | `results/atomic/he_hybrids.csv` | discussion of global hybrids |
 | local stability, GP93R | `functional/gp93r.py` | `python calculations/analytic/run_stability.py` | `results/analytic/stability_summary.csv` | `plot_results.py fig-realspace` |
 | basis-free radial spectra | `inputs/radial.json` | `python calculations/radial/run_radial.py` | `results/radial/radial_levels.csv` | `plot_results.py fig-spectrum` |
+| radial ablation and CAP | `inputs/radial_variants.json` | `python calculations/radial/run_radial_variants.py` | `results/radial/radial_variants_levels.csv` | none (text values) |
 
 The calibration and atomic drivers intentionally keep their complete matched
 sets together: 45 calibration cases and 15 atom/functional cases. Every case

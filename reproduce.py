@@ -84,6 +84,7 @@ def main() -> None:
             [python, "calculations/atomic/run_he_hybrids.py"],
             [python, "calculations/analytic/run_stability.py"],
             [python, "calculations/radial/run_radial.py"],
+            [python, "calculations/radial/run_radial_variants.py"],
         )
         for command in commands:
             run(command, environment)

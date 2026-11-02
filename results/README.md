@@ -29,6 +29,7 @@ Quantities without a stated unit are dimensionless or are counts.
 | He with standard and hybrid functionals | `python calculations/atomic/run_he_hybrids.py` | `inputs/he_hybrids.json` | `atomic/he_hybrids.csv` |
 | local stability and GP93R data | `python calculations/analytic/run_stability.py` | `functional/parameters.json`, `functional/gp93r.py` | `analytic/stability_curves.csv`, `analytic/stability_summary.csv`, `analytic/stability_metadata.json`, `analytic/gp93r_hydrogen_potential.csv` |
 | basis-free radial spectra | `python calculations/radial/run_radial.py` | `inputs/radial.json`, `functional/parameters.json`, `functional/gp93r.py` | `radial/coulomb_test.csv`, `radial/radial_summary.csv`, `radial/radial_levels.csv`, `radial/radial_metadata.json` |
+| radial ablation and CAP | `python calculations/radial/run_radial_variants.py` | `inputs/radial_variants.json`, `inputs/radial.json`, `functional/gp93r.py` | `radial/radial_variants_summary.csv`, `radial/radial_variants_levels.csv`, `radial/radial_variants_metadata.json` |
 
 The selected switch parameters are calibrated values, not additional fitted
 inputs. Before downstream stages, verify that
@@ -418,6 +419,24 @@ within \(10^{-5}\) Ha of threshold (`above_reported_threshold`).
 ### `radial/radial_metadata.json`
 
 The input snapshot and the GP93R settings.
+
+### `radial/radial_variants_summary.csv`, `radial/radial_variants_levels.csv`, `radial/radial_variants_metadata.json`
+
+Written by `calculations/radial/run_radial_variants.py` from
+`inputs/radial_variants.json`, with the grid, solver, and SCF settings of
+`inputs/radial.json`. The columns are those of the files above. The rows are:
+
+- `GP93R_CURV_X`: the bounded-curvature factor \(F_R\) with the canonical
+  density window;
+- `GP93R_WIN_X`: the canonical \(F_{\rm mix}\) with the GP93R window;
+- `CAP_X`: CAP exchange, evaluated with the analytic GGA channel of the script.
+  The density below \(10^{-20}\) is replaced by its exponential
+  continuation, because the noise of the computed tail would otherwise enter
+  the potential through \(\nabla\ln n\).
+
+The first two rows separate the two GP93R changes. The metadata records the
+self-check of the analytic GGA channel against the canonical PBE path on the
+hydrogen density (`gga_self_check_max_abs_dv_ha`).
 
 ## Figure source map
 

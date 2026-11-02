@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "purpose": "Radial exchange-only spectra of H and He for variants that separate the two GP93R changes, and for CAP exchange as a comparison with a GGA whose potential decays as -1/r.",
+  "note": "The radial grid, solver targets, thresholds and SCF settings are those of inputs/radial.json.",
+  "variants": [
+    {"name": "GP93R_CURV_X", "kind": "gp93_curvature_only",
+     "description": "F_R (bounded curvature, s1 = 0.5) with the canonical density window 1e-12 to 1e-6",
+     "mixing": {"H": [0.1, 0.03], "He": [0.3, 0.1]}},
+    {"name": "GP93R_WIN_X", "kind": "gp93_window_only",
+     "description": "canonical F_mix with the GP93R density window 1e-6 to 1e-4",
+     "mixing": {"H": [0.1, 0.03], "He": [0.3, 0.1]}},
+    {"name": "CAP_X", "kind": "cap",
+     "description": "CAP exchange, F = 1 + mu s ln(1+s)/[1 + c ln(1+s)], c = |A_x| mu / C1, mu = mu_PBE (Carmona-Espindola et al., J. Chem. Phys. 142, 054105, 2015), as a GGA with exact spin scaling and no clipping of s; the density below 1e-20 is replaced by its exponential continuation fitted between 1e-16 and 1e-20, because the noise of the computed tail would otherwise enter the potential through grad ln n",
+     "mixing": {"H": [0.3, 0.1], "He": [0.3, 0.1]}}
+  ],
+  "gga_self_check": {"description": "the analytic GGA channel used for CAP, applied to F_PBE, against the canonical PBE path on the hydrogen density, where the canonical path is active (spin density above its 1e-12 cutoff)", "r_range_bohr": [0.01, 12.0]}
+}

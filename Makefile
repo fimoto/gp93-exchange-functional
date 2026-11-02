@@ -1,5 +1,5 @@
 .PHONY: help guide calibration analytic hydrogenic hydrogen-exact atomic \
-	potentials h2 h2-grid he-hybrids stability radial \
+	potentials h2 h2-grid he-hybrids stability radial radial-variants \
 	fig-spectrum fig-realspace fig-calibration fig-gp93-building-block \
 	fig-hydrogen-regularization fig-atomic-systematics fig-he-levels \
 	fig-he-comparison fig-radial-potentials fig-h2 fig-all validate \
@@ -20,6 +20,7 @@ help:
 	@echo "  make he-hybrids                  He with standard and hybrid functionals"
 	@echo "  make stability                   local stability thresholds, GP93R data"
 	@echo "  make radial                      basis-free radial H/He spectra"
+	@echo "  make radial-variants             GP93R ablation and CAP exchange, radial"
 	@echo "  make <fig-...>                   one figure from saved data"
 	@echo "  make validate                    cross-file scientific checks"
 	@echo "Paper-table values are direct CSV outputs; see results/README.md."
@@ -60,6 +61,9 @@ stability:
 
 radial:
 	python calculations/radial/run_radial.py
+
+radial-variants:
+	python calculations/radial/run_radial_variants.py
 
 fig-calibration:
 	python calculations/plot_results.py fig-calibration
