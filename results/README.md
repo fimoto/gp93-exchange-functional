@@ -459,7 +459,7 @@ PNG previews, in the style of `calculations/figstyle.py`.
 
 ## Paper-table source map
 
-Numbering follows the revised manuscript, version 2.5 (November 2026).
+Numbering follows the revised manuscript, version 2.9 (November 2026).
 `fig_atomic_systematics.png` and the other figures above that are not listed
 here are produced by the repository but are not in the paper.
 
@@ -475,11 +475,16 @@ here are produced by the repository but are not in the paper.
 | Fig. 4 | `fig_spectrum.png` | `plot_results.py fig-spectrum` |
 | Fig. 5, H2 \(R_e\), \(D_e\) and grid check | `h2/h2_minima.csv`, `h2/h2_grid_validation.json` | `run_h2.py`, `validate_grid.py` |
 | Fig. 6, stability thresholds, \(s_{\rm H}\), \(F_{\rm GP93}(s_{\rm H})\), Eqs. (18) and (19) | `analytic/stability_summary.csv`, `analytic/stability_metadata.json` | `run_stability.py` |
+| Sec. IV A 2 curvature/window separation; Sec. IV C CAP comparison | `radial/radial_variants_levels.csv`, `radial/radial_variants_summary.csv` | `run_radial_variants.py` |
+| Table V, real-space grid and cell checks (RSDFT/OFDFT, recorded only) | `realspace/realspace_convergence.csv` | not in this repository |
 | He with hybrids (Sec. IV C) | `atomic/he_hybrids.csv` | `run_he_hybrids.py` |
 
 Table V and the real-space text (failed self-consistent variants, molecular
 HOMO eigenvalues, bulk Si, Li\(_2\)H, real-space verification) are produced
-with RSDFT/OFDFT and are not part of this repository.
+with RSDFT/OFDFT, which is not part of this repository. The inputs and
+outputs of the H\(_2\) and CH\(_4\) runs, including the grid and cell
+checks, are recorded in `realspace/` (see `realspace/README.md`); they cannot
+be regenerated from this repository.
 
 No secondary table file is generated. This keeps the connection between
 calculation settings, full-precision data, and displayed values visible to
