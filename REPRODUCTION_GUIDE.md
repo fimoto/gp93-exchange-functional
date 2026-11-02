@@ -431,6 +431,64 @@ the Fmix, RHF, and FCI convergence flags and spin-density norm on every row.
 The JSON reports each level-6-minus-level-5 difference and its maximum
 absolute value.
 
+## 10a. Stage 9 — He with standard and hybrid functionals
+
+Scientific question: do global hybrids (20--25 % exact exchange) bind a
+Rydberg-like virtual level of He in the same basis?
+
+```bash
+python -m json.tool inputs/he_hybrids.json
+python calculations/atomic/run_he_hybrids.py
+cat results/atomic/he_hybrids.csv
+```
+
+Four rows (PBE, B3LYP, PBE0, SCAN0). Check `converged`, `minus_homo_ev`,
+`negative_virtual_spatial_count` (zero for all four), and
+`lowest_virtual_ha` (positive).
+
+## 10b. Stage 10 — local stability thresholds and GP93R
+
+Scientific question: how strongly does each enhancement factor violate the
+local (Legendre--Hadamard) stability condition
+\(2n_\sigma>[|A_x|\max(F'',F'/s,0)/C_1^2]^3\) of one-orbital regions, and
+what does hydrogen exactness imply for it?
+
+```bash
+python calculations/analytic/run_stability.py
+cat results/analytic/stability_summary.csv
+python -m json.tool results/analytic/stability_metadata.json
+python calculations/plot_results.py fig-realspace
+```
+
+`stability_summary.csv` gives \(\max F''\), \(\max F'/s\), and the
+longitudinal and transverse thresholds for GP93 (about \(5\times10^4\) and
+620 bohr\(^{-3}\)), GP93R (1.4 and 1.3), and PBE (\(3.9\times10^{-5}\)).
+The metadata gives \(s_{\rm H}=(6\pi)^{-1/3}\), \(F_{\rm GP93}(s_{\rm H})=2.170\),
+the hydrogen-exactness bound \(\max F'/s\ge16.6\) (threshold 2.1), and the
+finite-difference check of \(\partial^2e_x/\partial g^2\).
+GP93R is defined in `functional/gp93r.py`.
+
+## 10c. Stage 11 — basis-free radial spectra
+
+Scientific question: which virtual levels of H and He are bound when no
+Gaussian basis limits the near-continuum?
+
+```bash
+python -m json.tool inputs/radial.json
+python calculations/radial/run_radial.py
+cat results/radial/coulomb_test.csv
+cat results/radial/radial_summary.csv
+cat results/radial/radial_levels.csv
+python calculations/plot_results.py fig-spectrum
+```
+
+Check the Coulomb test (errors \(<2\times10^{-6}\) Ha), and in the summary
+the mixing and grid checks of every level. Where
+`potential_residual_converged` is false, `residual_location_bohr` shows that
+the remaining residual sits at \(r<10^{-3}\) bohr, and
+`max_level_change_mixing_ha` shows that the levels do not depend on it.
+This stage takes about an hour on one core.
+
 ## 11. Paper-table reconstruction
 
 The five tables require no generated intermediate. Their numerical sources
@@ -575,8 +633,10 @@ calculation driver.
 | `fig_he_comparison.png` | `fig-he-comparison` | He rows of `results/atomic/atomic_systematics.csv` |
 | `fig_radial_potentials.png` | `fig-radial-potentials` | `results/potentials/radial_potentials.csv` |
 | `fig_h2.png` | `fig-h2` | `results/h2/h2_curve.csv`, `h2_metadata.json` |
+| `fig_spectrum.png` | `fig-spectrum` | `results/radial/radial_levels.csv`, `data/he_exact_ks_levels.csv` |
+| `fig_realspace.png` | `fig-realspace` | `results/analytic/stability_curves.csv`, `stability_metadata.json`, `gp93r_hydrogen_potential.csv` |
 
-Run all eight commands individually:
+Run all ten commands individually:
 
 ```bash
 python calculations/plot_results.py fig-calibration
@@ -587,6 +647,8 @@ python calculations/plot_results.py fig-he-levels
 python calculations/plot_results.py fig-he-comparison
 python calculations/plot_results.py fig-radial-potentials
 python calculations/plot_results.py fig-h2
+python calculations/plot_results.py fig-spectrum
+python calculations/plot_results.py fig-realspace
 ```
 
 ## 13. Cross-file validation

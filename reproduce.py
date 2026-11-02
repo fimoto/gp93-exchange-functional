@@ -19,6 +19,7 @@ GENERATED_DIRECTORIES = (
     ROOT / "results" / "atomic",
     ROOT / "results" / "h2",
     ROOT / "results" / "potentials",
+    ROOT / "results" / "radial",
     ROOT / "figures",
 )
 
@@ -80,6 +81,9 @@ def main() -> None:
             [python, "calculations/potentials/run_potentials.py"],
             [python, "calculations/h2/run_h2.py"],
             [python, "calculations/h2/validate_grid.py"],
+            [python, "calculations/atomic/run_he_hybrids.py"],
+            [python, "calculations/analytic/run_stability.py"],
+            [python, "calculations/radial/run_radial.py"],
         )
         for command in commands:
             run(command, environment)

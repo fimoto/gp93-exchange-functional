@@ -1,5 +1,6 @@
 .PHONY: help guide calibration analytic hydrogenic hydrogen-exact atomic \
-	potentials h2 h2-grid fig-calibration fig-gp93-building-block \
+	potentials h2 h2-grid he-hybrids stability radial \
+	fig-spectrum fig-realspace fig-calibration fig-gp93-building-block \
 	fig-hydrogen-regularization fig-atomic-systematics fig-he-levels \
 	fig-he-comparison fig-radial-potentials fig-h2 fig-all validate \
 	postprocess integration
@@ -16,6 +17,9 @@ help:
 	@echo "  make atomic                      atom and He-basis data"
 	@echo "  make potentials                  radial-potential data"
 	@echo "  make h2 h2-grid                  H2 curve and grid-check data"
+	@echo "  make he-hybrids                  He with standard and hybrid functionals"
+	@echo "  make stability                   local stability thresholds, GP93R data"
+	@echo "  make radial                      basis-free radial H/He spectra"
 	@echo "  make <fig-...>                   one figure from saved data"
 	@echo "  make validate                    cross-file scientific checks"
 	@echo "Paper-table values are direct CSV outputs; see results/README.md."
@@ -48,6 +52,15 @@ h2:
 h2-grid:
 	python calculations/h2/validate_grid.py
 
+he-hybrids:
+	python calculations/atomic/run_he_hybrids.py
+
+stability:
+	python calculations/analytic/run_stability.py
+
+radial:
+	python calculations/radial/run_radial.py
+
 fig-calibration:
 	python calculations/plot_results.py fig-calibration
 
@@ -71,6 +84,12 @@ fig-radial-potentials:
 
 fig-h2:
 	python calculations/plot_results.py fig-h2
+
+fig-spectrum:
+	python calculations/plot_results.py fig-spectrum
+
+fig-realspace:
+	python calculations/plot_results.py fig-realspace
 
 fig-all:
 	python calculations/plot_results.py all

@@ -1,8 +1,9 @@
 # GP93 hydrogen-exact exchange
 
 This repository is the computational and data companion to
-“Hydrogen-exact exchange as a semilocal building block for
-intermediate-range potentials and diffuse bound states.”
+“Hydrogen-exact exchange as a semilocal building block: Coulombic
+Kohn–Sham exchange potentials at intermediate range and bound virtual
+levels” (submitted).
 
 The project separates two physically distinct objects:
 
@@ -61,16 +62,30 @@ constants are stored in `functional/parameters.json`.
 
 ## Repository map
 
-- `functional/`: GP93 continuation and canonical regularized PySCF callback.
+- `functional/`: GP93 continuation and canonical regularized PySCF callback;
+  `gp93r.py` builds the real-space variant GP93R (bounded small-\(s\)
+  curvature and the narrower density window used in RSDFT/OFDFT).
 - `inputs/`: human-readable settings consumed directly by the drivers.
-- `data/`: versioned NIST reference data.
+- `data/`: versioned NIST reference data and the exact He Kohn--Sham levels
+  of Savin, Umrigar, and Gonze.
 - `calculations/analytic/`: GP93, exact-H, derivative, and hydrogenic tests.
 - `calculations/calibration/`: five-system parameter selection.
 - `calculations/atomic/`: matched exchange-only atoms, diffuse virtual-state
   analysis, basis sensitivity, and the unregularized exact-H SCF test.
 - `calculations/h2/`: near-equilibrium H2 curve and grid validation.
 - `calculations/potentials/`: common-density radial-potential diagnostics.
+- `calculations/radial/`: basis-free radial exchange-only Kohn--Sham spectra
+  of H and He (PBE, GP93, GP93R).
+- `calculations/analytic/run_stability.py`: local (Legendre--Hadamard)
+  stability thresholds of the enhancement factors and GP93R comparison data.
+- `calculations/atomic/run_he_hybrids.py`: He with standard and global-hybrid
+  functionals in the same basis.
 - `calculations/plot_results.py`: figures from saved numerical results only.
+- `calculations/figstyle.py`: common figure style. The paper figures are
+  written as PDF at their printed width (one column 3.4 in, full page
+  7.0 in) and as PNG previews. The preferred font is Liberation Sans
+  (TrueType, metrically compatible with Arial). Without it a fallback
+  sans-serif font is used and the figures are not byte-identical.
 - `calculations/validate_results.py`: cross-file scientific and provenance
   checks.
 - `results/`: canonical machine-readable outputs and data dictionary.

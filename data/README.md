@@ -23,3 +23,9 @@ from the NIST Computational Chemistry Comparison and Benchmark Database
 - https://cccbdb.nist.gov/exp2x.asp?casno=1333740
 
 The electronic-structure calculation itself does not access the network.
+
+`he_exact_ks_levels.csv` contains the exact Kohn--Sham eigenvalues of the He
+atom (obtained from the exact Kohn--Sham potential of Umrigar and Gonze) as
+tabulated by A. Savin, C. J. Umrigar, and X. Gonze, Chem. Phys. Lett. 288,
+391 (1998), Table 3.  They are used only as reference markers in
+`fig_spectrum.png` and in the radial-spectrum table.

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "purpose": "He with standard semilocal and global-hybrid functionals (with correlation): -eps_HOMO and negative virtual orbitals in the same basis as the GP93 atomic calculations.",
+  "atom": "He 0 0 0",
+  "coordinate_unit": "Angstrom",
+  "basis": "aug-cc-pv5z",
+  "grid_level": 6,
+  "conv_tol": 1e-10,
+  "max_cycle": 200,
+  "negative_virtual_threshold_ha": 0.0,
+  "functionals": [
+    {"name": "PBE", "xc": "PBE", "exact_exchange_fraction": 0.0},
+    {"name": "B3LYP", "xc": "B3LYP", "exact_exchange_fraction": 0.2},
+    {"name": "PBE0", "xc": "PBE0", "exact_exchange_fraction": 0.25},
+    {"name": "SCAN0", "xc": "MGGA_X_SCAN*0.75+HF*0.25,MGGA_C_SCAN", "exact_exchange_fraction": 0.25}
+  ]
+}

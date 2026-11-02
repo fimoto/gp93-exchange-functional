@@ -77,6 +77,18 @@ def main() -> None:
             "results/h2/h2_grid_validation.json",
             "results/potentials/radial_potentials.csv",
             "results/potentials/radial_potentials_metadata.json",
+            "inputs/he_hybrids.json",
+            "inputs/radial.json",
+            "data/he_exact_ks_levels.csv",
+            "results/atomic/he_hybrids.csv",
+            "results/analytic/stability_curves.csv",
+            "results/analytic/stability_summary.csv",
+            "results/analytic/stability_metadata.json",
+            "results/analytic/gp93r_hydrogen_potential.csv",
+            "results/radial/coulomb_test.csv",
+            "results/radial/radial_summary.csv",
+            "results/radial/radial_levels.csv",
+            "results/radial/radial_metadata.json",
         )
     )
     selected = load_json("calibration/selected_parameters.json")
@@ -520,6 +532,56 @@ def main() -> None:
         "Na fixed-density potential is not improved",
     )
 
+    # He with standard and hybrid functionals: no bound virtual level.
+    hybrids = rows("atomic/he_hybrids.csv")
+    require(len(hybrids) == 4 and all(row["converged"] == "True" for row in hybrids),
+            "He hybrid set is incomplete or unconverged")
+    require(all(int(row["negative_virtual_spatial_count"]) == 0 for row in hybrids),
+            "a standard or hybrid functional binds a He virtual level")
+
+    # Local stability thresholds and the hydrogen-exactness bound.
+    stability = {row["functional"]: row for row in rows("analytic/stability_summary.csv")}
+    stability_meta = load_json("analytic/stability_metadata.json")
+    require(float(stability["GP93"]["m_c_longitudinal"]) > 1.0e4,
+            "GP93 longitudinal threshold is unexpectedly small")
+    require(float(stability["GP93R"]["m_c_longitudinal"]) < 2.0,
+            "GP93R longitudinal threshold is unexpectedly large")
+    require(abs(float(stability_meta["s_H"]) - (6.0 * math.pi) ** (-1.0 / 3.0)) < 1e-14,
+            "s_H differs from (6 pi)^(-1/3)")
+    require(float(stability_meta["one_minus_chi_at_s_H_exponent"]) > 900.0,
+            "the outer switch is not negligible on the hydrogen density")
+    require(float(stability_meta["fd_check_d2e_dg2_max_relative_error"]) < 1e-6,
+            "finite-difference check of d2e/dg2 failed")
+
+    # Basis-free radial spectra.
+    radial_input = json.loads((ROOT / "inputs" / "radial.json").read_text(encoding="utf-8"))
+    require(load_json("radial/radial_metadata.json")["input_settings"] == radial_input,
+            "radial results do not match the current input deck")
+    require(max(float(row["abs_error_ha"]) for row in rows("radial/coulomb_test.csv")) < 1e-5,
+            "radial solver fails the Coulomb test")
+    radial = {(row["system"], row["functional"]): row for row in rows("radial/radial_summary.csv")}
+    require(len(radial) == 6, "radial summary is incomplete")
+    for key, row in radial.items():
+        require(float(row["max_level_change_mixing_ha"]) < 1e-5,
+                f"radial levels depend on mixing for {key}")
+        require(float(row["max_level_change_grid_ha"]) < 1e-4,
+                f"radial levels depend on the grid for {key}")
+        if row["potential_residual_converged"] != "True":
+            require(float(row["residual_location_bohr"]) < 1e-3,
+                    f"unconverged radial residual away from the nucleus for {key}")
+    require(abs(float(radial[("H", "GP93_X")]["homo_ha"]) + 0.5) < 1e-4,
+            "radial GP93 H eigenvalue is not -1/2")
+    require(int(radial[("He", "PBE_X")]["n_bound_levels"]) == 0,
+            "PBE exchange binds a He virtual level")
+    require(int(radial[("He", "GP93_X")]["n_bound_levels"]) >= 3,
+            "GP93 exchange binds fewer than three He virtual levels")
+    for system in ("H", "He"):
+        pyscf_row = next(row for row in atomic
+                         if row["system"] == system and row["functional"] == "Fmix_X")
+        require(abs(float(radial[(system, "GP93_X")]["minus_homo_ev"])
+                    - float(pyscf_row["minus_homo_ev"])) < 1e-3,
+                f"radial and PySCF GP93 HOMO differ for {system}")
+
     expected_figures = (
         "fig_gp93_building_block.png",
         "fig_hydrogen_regularization.png",
@@ -529,6 +591,8 @@ def main() -> None:
         "fig_he_comparison.png",
         "fig_h2.png",
         "fig_radial_potentials.png",
+        "fig_spectrum.png",
+        "fig_realspace.png",
     )
     for name in expected_figures:
         path = ROOT / "figures" / name

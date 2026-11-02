@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "purpose": "Basis-free radial exchange-only Kohn-Sham spectra of H (spin-polarized) and He (closed shell).",
+  "note": "Every ground-state spin channel of H and He is one orbital, so alpha = 0, G(alpha) = 1 and v_tau = 0; the meta-GGA reduces to a GGA on these densities.",
+  "radial_grid": {"variable": "x = ln r", "r_min_bohr": 1e-6, "r_max_bohr": 200.0, "points": 8000},
+  "grid_check": {"r_max_bohr": 400.0, "points": 12000},
+  "shift_invert_targets_ha": [[-1.2, 4], [-0.15, 10], [-0.02, 14]],
+  "ground_state_shift_ha": -1.5,
+  "angular_momenta": [0, 1, 2],
+  "levels_per_l": 14,
+  "bound_threshold_ha": 0.0,
+  "reported_threshold_ha": -1e-5,
+  "scf": {"max_cycle": 400, "potential_residual_tolerance": 1e-6},
+  "systems": [
+    {"name": "H", "nuclear_charge": 1, "electrons": 1, "spin": "polarized"},
+    {"name": "He", "nuclear_charge": 2, "electrons": 2, "spin": "closed"}
+  ],
+  "functionals": [
+    {"name": "PBE_X", "kind": "pbe", "mixing": {"H": [0.3, 0.1], "He": [0.3, 0.1]}},
+    {"name": "GP93_X", "kind": "gp93", "mixing": {"H": [0.3, 0.1], "He": [0.3, 0.1]}},
+    {"name": "GP93R_X", "kind": "gp93r", "mixing": {"H": [0.1, 0.03], "He": [0.3, 0.1]}}
+  ],
+  "coulomb_test": {"max_n": 6, "angular_momenta": [0, 1, 2]},
+  "exact_reference_file": "data/he_exact_ks_levels.csv"
+}

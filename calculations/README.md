@@ -25,6 +25,9 @@ canonical CSV files; there is no table-export or document-build stage.
 | radial potentials | `inputs/potentials.json` | `python calculations/potentials/run_potentials.py` | `results/potentials/radial_potentials.csv` | radial-potential figure |
 | H2 curve and minima | `inputs/h2.json` | `python calculations/h2/run_h2.py` | `results/h2/h2_curve.csv`, `h2_minima.csv` | H2 figure and paper table 5 |
 | H2 grid check | `inputs/h2.json` | `python calculations/h2/validate_grid.py` | `results/h2/h2_grid_validation.csv` | inspect level-to-level differences |
+| He with hybrids | `inputs/he_hybrids.json` | `python calculations/atomic/run_he_hybrids.py` | `results/atomic/he_hybrids.csv` | discussion of global hybrids |
+| local stability, GP93R | `functional/gp93r.py` | `python calculations/analytic/run_stability.py` | `results/analytic/stability_summary.csv` | `plot_results.py fig-realspace` |
+| basis-free radial spectra | `inputs/radial.json` | `python calculations/radial/run_radial.py` | `results/radial/radial_levels.csv` | `plot_results.py fig-spectrum` |
 
 The calibration and atomic drivers intentionally keep their complete matched
 sets together: 45 calibration cases and 15 atom/functional cases. Every case
@@ -42,6 +45,8 @@ python calculations/plot_results.py fig-he-levels
 python calculations/plot_results.py fig-he-comparison
 python calculations/plot_results.py fig-radial-potentials
 python calculations/plot_results.py fig-h2
+python calculations/plot_results.py fig-spectrum
+python calculations/plot_results.py fig-realspace
 ```
 
 Each command reads only saved result files. The complete source mapping is in

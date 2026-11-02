@@ -5,8 +5,8 @@ paper's figures and tables. Run commands from the repository root.
 Calculation programs write CSV/JSON data here; `calculations/plot_results.py`
 reads those saved data and writes figures in a separate step.
 
-Paths beginning with `analytic/`, `atomic/`, `calibration/`, `h2/`, or
-`potentials/` are relative to this directory. All other paths are relative to
+Paths beginning with `analytic/`, `atomic/`, `calibration/`, `h2/`,
+`potentials/`, or `radial/` are relative to this directory. All other paths are relative to
 the repository root.
 
 The row counts below correspond to the released input decks and provide
@@ -26,6 +26,9 @@ Quantities without a stated unit are dimensionless or are counts.
 | radial potentials | `python calculations/potentials/run_potentials.py` | `inputs/potentials.json`, `functional/parameters.json` | `potentials/radial_potentials.csv`, `potentials/radial_potentials_metadata.json` |
 | H2 curve and minima | `python calculations/h2/run_h2.py` | `inputs/h2.json`, `functional/parameters.json`, `data/h2_reference.csv` | `h2/h2_curve.csv`, `h2/h2_minima.csv`, `h2/h2_metadata.json` |
 | H2 grid check | `python calculations/h2/validate_grid.py` | grid-validation block in `inputs/h2.json` and the same H2 settings | `h2/h2_grid_validation.csv`, `h2/h2_grid_validation.json` |
+| He with standard and hybrid functionals | `python calculations/atomic/run_he_hybrids.py` | `inputs/he_hybrids.json` | `atomic/he_hybrids.csv` |
+| local stability and GP93R data | `python calculations/analytic/run_stability.py` | `functional/parameters.json`, `functional/gp93r.py` | `analytic/stability_curves.csv`, `analytic/stability_summary.csv`, `analytic/stability_metadata.json`, `analytic/gp93r_hydrogen_potential.csv` |
+| basis-free radial spectra | `python calculations/radial/run_radial.py` | `inputs/radial.json`, `functional/parameters.json`, `functional/gp93r.py` | `radial/coulomb_test.csv`, `radial/radial_summary.csv`, `radial/radial_levels.csv`, `radial/radial_metadata.json` |
 
 The selected switch parameters are calibrated values, not additional fitted
 inputs. Before downstream stages, verify that
@@ -344,7 +347,83 @@ Fmix/PBE mean absolute distances from the stated reference.
 - **Use:** interpretation and numerical validation of the H/He/Na
   potential diagnostics.
 
+## He with standard and hybrid functionals
+
+### `atomic/he_hybrids.csv`
+
+One row per functional (PBE, B3LYP, PBE0, SCAN0; all with correlation) for
+He in aug-cc-pV5Z: convergence, total energy, `minus_homo_ev`, the number of
+negative virtual spatial orbitals, the lowest virtual eigenvalue, and the
+PySCF version.
+
+- **Use:** the discussion of global hybrids (20--25 % exact exchange raises
+  \(-\epsilon_{\rm HOMO}\) but binds no virtual level).
+
+## Local stability and the real-space variant GP93R
+
+`functional/gp93r.py` builds the GP93R factor \(F_R\) (minimax small-\(s\)
+replacement below \(s_1=0.5\), \(|F_R'''|\le800\)) and the GP93R density
+window \(10^{-6}\)--\(10^{-4}\).  The same construction is used by
+`tools/gp93/make_gp93r_table.py` in RSDFT/OFDFT.
+
+### `analytic/stability_curves.csv`
+
+On a logarithmic \(s\) grid (\(10^{-2}\)--3): \(F\) and the local
+stability threshold
+\(m_c(s)=[|A_x|\max(F'',F'/s,0)/C_1^2]^3\) for PBE, GP93 (\(F_{\rm mix}\))
+and GP93R (\(F_R\)).  The narrow spike of GP93 at \(s=0.0507\) is the
+lower end (\(z=-6\)) of the tabulated \(w(z)\) and is numerical.
+
+### `analytic/stability_summary.csv`
+
+Maximum \(F''\) and \(F'/s\) (for \(0.06\le s\le1\)) and the
+corresponding longitudinal and transverse thresholds for GP93, GP93R and PBE.
+
+### `analytic/stability_metadata.json`
+
+\(s_{\rm H}=(6\pi)^{-1/3}\), \(F_{\rm GP93}(s_{\rm H})=(8\pi/3)s_{\rm H}c_0\),
+the hydrogen-exactness bound \(\max F'/s\ge2[F(s_{\rm H})-1]/s_{\rm H}^2\)
+and its \(m_c\), the exponent \((s_{\rm H}/s_0)^p\) of \(1-\chi(s_{\rm H})\),
+and a finite-difference check of \(\partial^2e_x/\partial g^2\).
+
+### `analytic/gp93r_hydrogen_potential.csv`
+
+\(-rv_x\) on the exact hydrogen density for GP93, GP93R and PBE exchange,
+with the exact \(rv_{\rm H}\).
+
+## Basis-free radial spectra
+
+### `radial/coulomb_test.csv`
+
+Solver test on the bare \(-1/r\) potential: levels \(n\le6\), \(l=0\)--2,
+against \(-1/(2n^2)\).
+
+### `radial/radial_summary.csv`
+
+One row per system (H, He) and functional (PBE_X, GP93_X, GP93R_X):
+`minus_homo_ev`, SCF cycles, whether the potential residual reached
+\(10^{-10}\), the final residual and the radius where it is largest, and the
+largest change of any reported level under the mixing check
+(`max_level_change_mixing_ha`) and under the larger grid
+(`max_level_change_grid_ha`).  For He with GP93_X and H with GP93R_X the
+residual stalls at \(r<10^{-3}\) bohr; the level changes show that this does
+not affect the spectrum.
+
+### `radial/radial_levels.csv`
+
+One row per bound virtual level (\(\varepsilon<0\)): system, functional,
+\(l\), an ordering label, energy, \(n_{\rm eff}\), and whether the level lies
+within \(10^{-5}\) Ha of threshold (`above_reported_threshold`).
+
+### `radial/radial_metadata.json`
+
+The input snapshot and the GP93R settings.
+
 ## Figure source map
+
+The six paper figures (calibration, GP93 building block, radial potentials,
+H2, spectrum, real space) are written as PDF at their printed width and as
+PNG previews, in the style of `calculations/figstyle.py`.
 
 | Figure | Numerical source |
 |---|---|
@@ -356,16 +435,32 @@ Fmix/PBE mean absolute distances from the stated reference.
 | `fig_he_comparison.png` | He rows of `atomic/atomic_systematics.csv` |
 | `fig_radial_potentials.png` | `potentials/radial_potentials.csv` |
 | `fig_h2.png` | `h2/h2_curve.csv`, `h2/h2_metadata.json` |
+| `fig_spectrum.png` | `radial/radial_levels.csv`, `data/he_exact_ks_levels.csv` |
+| `fig_realspace.png` | `analytic/stability_curves.csv`, `analytic/stability_metadata.json`, `analytic/gp93r_hydrogen_potential.csv` |
 
 ## Paper-table source map
 
-| Paper table | Direct CSV source | Producer |
+Numbering follows the revised manuscript, version 2.5 (November 2026).
+`fig_atomic_systematics.png` and the other figures above that are not listed
+here are produced by the repository but are not in the paper.
+
+| Paper item | Direct source | Producer |
 |---|---|---|
-| hydrogenic fixed-density errors | `analytic/hydrogenic_ions.csv` | `run_hydrogenic.py` |
-| matched atomic comparison | `atomic/atomic_systematics.csv` | `run_atomic.py` |
-| He negative virtual levels | `atomic/he_negative_virtual_levels.csv` | `run_atomic.py` |
-| He basis sensitivity | `atomic/he_basis_sensitivity.csv` | `run_atomic.py` |
-| H2 spline minima | `h2/h2_minima.csv` | `run_h2.py` |
+| Table I, hydrogenic fixed-density errors | `analytic/hydrogenic_ions.csv` | `run_hydrogenic.py` |
+| Table II, radial bound levels and \(-\epsilon_{\rm HOMO}\) of H and He | `radial/radial_levels.csv`, `radial/radial_summary.csv`, `data/he_exact_ks_levels.csv`, `data/experimental_ip.csv` | `run_radial.py` |
+| Table III, He basis sensitivity | `atomic/he_basis_sensitivity.csv` (radial row: `radial/radial_levels.csv`) | `run_atomic.py` |
+| Table IV, exchange-only atomic comparison and MAE | `atomic/atomic_systematics.csv` | `run_atomic.py` |
+| Fig. 1 | `fig_gp93_building_block.png` | `plot_results.py fig-gp93-building-block` |
+| Fig. 2 (calibration; text values) | `calibration/calibration_summary.csv` | `run_calibration.py` |
+| Fig. 3 (text values for H, He, Na) | `fig_radial_potentials.png`, `potentials/radial_potentials.csv` | `run_potentials.py`, `plot_results.py` |
+| Fig. 4 | `fig_spectrum.png` | `plot_results.py fig-spectrum` |
+| Fig. 5, H2 \(R_e\), \(D_e\) and grid check | `h2/h2_minima.csv`, `h2/h2_grid_validation.json` | `run_h2.py`, `validate_grid.py` |
+| Fig. 6, stability thresholds, \(s_{\rm H}\), \(F_{\rm GP93}(s_{\rm H})\), Eqs. (18) and (19) | `analytic/stability_summary.csv`, `analytic/stability_metadata.json` | `run_stability.py` |
+| He with hybrids (Sec. IV C) | `atomic/he_hybrids.csv` | `run_he_hybrids.py` |
+
+Table V and the real-space text (failed self-consistent variants, molecular
+HOMO eigenvalues, bulk Si, Li\(_2\)H, real-space verification) are produced
+with RSDFT/OFDFT and are not part of this repository.
 
 No secondary table file is generated. This keeps the connection between
 calculation settings, full-precision data, and displayed values visible to
@@ -382,6 +477,7 @@ git diff -- results/analytic/
 git diff -- results/atomic/
 git diff -- results/potentials/
 git diff -- results/h2/
+git diff -- results/radial/
 ```
 
 Small last-digit floating-point differences may occur across CPUs or BLAS

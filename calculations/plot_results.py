@@ -43,14 +43,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import CubicSpline
 
+import figstyle
+
 
 ROOT = Path(__file__).resolve().parents[1]
 RESULTS_DIR = ROOT / "results"
 FIGURE_DIR = ROOT / "figures"
 
 STAGE_OUTPUTS = {
-    "calibration": ("fig_calibration.png",),
+    "calibration": ("fig_calibration.pdf", "fig_calibration.png"),
     "analytic": (
+        "fig_gp93_building_block.pdf",
         "fig_gp93_building_block.png",
         "fig_hydrogen_regularization.png",
     ),
@@ -59,19 +62,23 @@ STAGE_OUTPUTS = {
         "fig_he_levels.png",
         "fig_he_comparison.png",
     ),
-    "h2": ("fig_h2.png",),
-    "potentials": ("fig_radial_potentials.png",),
+    "h2": ("fig_h2.pdf", "fig_h2.png"),
+    "potentials": ("fig_radial_potentials.pdf", "fig_radial_potentials.png"),
+    "radial": ("fig_spectrum.pdf", "fig_spectrum.png"),
+    "stability": ("fig_realspace.pdf", "fig_realspace.png"),
 }
 
 DIRECT_OUTPUTS = {
-    "fig-calibration": ("fig_calibration.png",),
-    "fig-gp93-building-block": ("fig_gp93_building_block.png",),
+    "fig-calibration": ("fig_calibration.pdf", "fig_calibration.png"),
+    "fig-gp93-building-block": ("fig_gp93_building_block.pdf", "fig_gp93_building_block.png"),
     "fig-hydrogen-regularization": ("fig_hydrogen_regularization.png",),
     "fig-atomic-systematics": ("fig_atomic_systematics.png",),
     "fig-he-levels": ("fig_he_levels.png",),
     "fig-he-comparison": ("fig_he_comparison.png",),
-    "fig-h2": ("fig_h2.png",),
-    "fig-radial-potentials": ("fig_radial_potentials.png",),
+    "fig-h2": ("fig_h2.pdf", "fig_h2.png"),
+    "fig-radial-potentials": ("fig_radial_potentials.pdf", "fig_radial_potentials.png"),
+    "fig-spectrum": ("fig_spectrum.pdf", "fig_spectrum.png"),
+    "fig-realspace": ("fig_realspace.pdf", "fig_realspace.png"),
 }
 
 PUBLICATION_PLOT_STYLE = {
@@ -150,109 +157,6 @@ def columns(rows: list[dict[str, str]], *names: str) -> dict[str, np.ndarray]:
     }
 
 
-def plot_calibration() -> tuple[Path, ...]:
-    result_path = RESULTS_DIR / "calibration" / "calibration_results.json"
-    require_files((result_path,), "calibration")
-    document = read_json(result_path)
-    scan = document.get("scan")
-    if not isinstance(scan, list) or not scan:
-        raise ValueError("calibration_results.json has no non-empty 'scan' array")
-
-    valid = [
-        point
-        for point in scan
-        if point.get("mae_5system_eV") is not None
-    ]
-    missing = [
-        point
-        for point in scan
-        if point.get("mae_5system_eV") is None
-    ]
-    s0_values = np.asarray([float(point["s0"]) for point in scan])
-    p_value = int(document.get("method", {}).get("p", scan[0]["p"]))
-
-    plt.rcParams.update(PUBLICATION_PLOT_STYLE)
-    fig, ax = plt.subplots(figsize=(3.40, 2.55), layout="constrained")
-    if valid:
-        x = np.asarray([float(point["s0"]) for point in valid])
-        y = np.asarray([float(point["mae_5system_eV"]) for point in valid])
-        ax.plot(
-            x,
-            y,
-            "o-",
-            color="#1f5fa8",
-            lw=1.5,
-            ms=4.2,
-            label="five-system MAE",
-            zorder=3,
-        )
-        minimum = min(valid, key=lambda point: float(point["mae_5system_eV"]))
-        ax.plot(
-            float(minimum["s0"]),
-            float(minimum["mae_5system_eV"]),
-            marker="*",
-            color="#c0392b",
-            ms=9,
-            linestyle="none",
-            zorder=4,
-        )
-        ax.annotate(
-            (
-                rf"$s_0={float(minimum['s0']):.2f}$"
-                "\n"
-                rf"MAE={float(minimum['mae_5system_eV']):.3f} eV"
-            ),
-            xy=(
-                float(minimum["s0"]),
-                float(minimum["mae_5system_eV"]),
-            ),
-            xytext=(float(minimum["s0"]), 0.875),
-            textcoords="data",
-            fontsize=7.2,
-            ha="center",
-            va="bottom",
-            arrowprops={"arrowstyle": "-", "lw": 0.6, "color": "#c0392b"},
-        )
-
-    if missing:
-        x_missing = [float(point["s0"]) for point in missing]
-        ax.scatter(
-            x_missing,
-            [0.035] * len(x_missing),
-            transform=ax.get_xaxis_transform(),
-            marker="x",
-            s=60,
-            linewidths=1.8,
-            color="#b03a2e",
-            clip_on=False,
-            label="failed calculation(s)",
-            zorder=5,
-        )
-        for point in missing:
-            failed = ",".join(str(x) for x in point.get("failed_systems", []))
-            ax.annotate(
-                failed,
-                xy=(float(point["s0"]), 0.035),
-                xycoords=ax.get_xaxis_transform(),
-                xytext=(0, 7),
-                textcoords="offset points",
-                ha="center",
-                va="bottom",
-                color="#8e2a20",
-                fontsize=7.0,
-            )
-
-    ax.set_xlabel(r"switching scale $s_0$")
-    ax.set_ylabel(r"MAE of $-\varepsilon_{\rm HOMO}$ (eV)")
-    ax.set_title(rf"Outer-switch calibration ($p={p_value}$)")
-    ax.set_xlim(float(s0_values.min()) - 0.015, float(s0_values.max()) + 0.015)
-    ax.grid(axis="y", color="#cccccc", linewidth=0.6, alpha=0.65)
-    ax.legend(fontsize=7.2, loc="upper left")
-    output = FIGURE_DIR / "fig_calibration.png"
-    fig.savefig(output, **SAVEFIG_OPTIONS)
-    plt.close(fig)
-    return (output,)
-
 
 def _analytic_parameters(stage: str) -> tuple[float, int, float, float, float]:
     metadata_path = RESULTS_DIR / "analytic" / "analytic_metadata.json"
@@ -268,209 +172,6 @@ def _analytic_parameters(stage: str) -> tuple[float, int, float, float, float]:
         float(parameters["s_max"]),
     )
 
-
-def plot_gp93_building_block(
-    rows: list[dict[str, str]],
-    s0: float,
-    p_switch: int,
-) -> Path:
-    data = columns(
-        rows,
-        "s",
-        "z_raw",
-        "z_in_fmix_py",
-        "F_PBE",
-        "F_GP93_bare_analytic",
-        "F_GP93_fmix_py_zclipped",
-        "Fmix_direct_selected_parameters",
-    )
-    order = np.argsort(data["s"])
-    for name in data:
-        data[name] = data[name][order]
-    s = data["s"]
-    z = data["z_raw"]
-    k_gp = 8.0 * math.pi / 3.0
-    w_bare = data["F_GP93_bare_analytic"] / (k_gp * s)
-    w_source = data["F_GP93_fmix_py_zclipped"] / (k_gp * s)
-
-    plt.rcParams.update(PUBLICATION_PLOT_STYLE)
-    fig, axes = plt.subplots(
-        1,
-        3,
-        figsize=(7.05, 3.05),
-        gridspec_kw={"width_ratios": [1.05, 1.0, 1.2]},
-        constrained_layout=True,
-    )
-
-    ax = axes[0]
-    # The saved CSV contains the canonical piecewise GP93 curve, rather than
-    # three independently sampled continuations.  Accordingly, each label is
-    # shown only on the interval where that branch generated the stored data.
-    series = (z >= -6.0) & (z <= 0.0)
-    exact = (z > 0.0) & (z <= 12.0)
-    asymptotic = (z >= 12.0) & (z <= 30.0)
-    source = (z >= -6.0) & (z <= 30.0)
-    ax.plot(
-        z[series],
-        w_bare[series],
-        "--",
-        color="#cc443d",
-        label=r"Frobenius ($z\leq0$)",
-    )
-    ax.plot(
-        z[exact],
-        w_bare[exact],
-        color="#225ea8",
-        label=r"exact ($0<z\leq12$)",
-    )
-    ax.plot(
-        z[asymptotic],
-        w_bare[asymptotic],
-        ":",
-        color="#238b45",
-        linewidth=2.1,
-        label="asymptotic",
-    )
-    ax.plot(
-        z[source],
-        w_source[source],
-        color="black",
-        linewidth=0.8,
-        alpha=0.55,
-        label="_nolegend_",
-    )
-    zero_index = int(np.argmin(np.abs(z)))
-    ax.scatter([0.0], [w_bare[zero_index]], color="black", s=22, zorder=5)
-    ax.axhline(0.0, color="0.45", linewidth=0.6)
-    ax.axvline(0.0, color="0.45", linewidth=0.6)
-    ax.set(
-        xlabel=r"$z$",
-        ylabel=r"$w(z)$",
-        xlim=(-6.0, 30.0),
-        ylim=(-2.35, 1.4),
-        title=r"(a) $w(z)\sim-Cz^{2/3}$",
-    )
-    ax.legend(fontsize=6.9, loc="upper right", framealpha=0.9)
-
-    ax = axes[1]
-    detail = (s >= 2.0e-2) & (s <= 4.0)
-    ax.plot(s[detail], data["F_PBE"][detail], color="0.45", label="PBE")
-    ax.plot(
-        s[detail],
-        data["F_GP93_bare_analytic"][detail],
-        "--",
-        color="#cc443d",
-        label="bare GP93",
-    )
-    ax.plot(
-        s[detail],
-        data["Fmix_direct_selected_parameters"][detail],
-        color="#225ea8",
-        linewidth=2.2,
-        label=r"implemented $F_{\rm mix}$",
-    )
-    ax.axhline(0.0, color="black", linewidth=0.6)
-    ax.axhline(1.0, color="0.5", linewidth=0.6, linestyle=":")
-    ax.axvline(s0, color="#225ea8", linewidth=0.7, linestyle=":")
-    ax.set_xscale("log")
-    ax.set(
-        xlabel=r"$s$",
-        ylabel=r"$F(s)$",
-        xlim=(2.0e-2, 4.0),
-        ylim=(-8.0, 3.2),
-        title=rf"(b) $p={p_switch},\ s_0={s0:.2f}$ crossover",
-    )
-    ax = axes[2]
-    ax.plot(s, data["F_PBE"], color="0.45", label="PBE (bounded)")
-    ax.plot(
-        s,
-        data["F_GP93_bare_analytic"],
-        "--",
-        color="#cc443d",
-        label="bare GP93 (unclipped)",
-    )
-    ax.plot(
-        s,
-        data["Fmix_direct_selected_parameters"],
-        color="#225ea8",
-        linewidth=2.1,
-        label=r"implemented $F_{\rm mix}$",
-    )
-    z_in_range = (z[0] <= 30.0) and (z[-1] >= 30.0)
-    s_zmax = (
-        float(np.exp(np.interp(30.0, z, np.log(s))))
-        if z_in_range
-        else math.nan
-    )
-    s_after_clip = columns(rows, "s_after_mgga_clip")["s_after_mgga_clip"][order]
-    clip_changed = ~np.isclose(s_after_clip, s, rtol=1.0e-12, atol=0.0)
-    s_max = (
-        float(np.max(s_after_clip[clip_changed]))
-        if clip_changed.any()
-        else 2900.0
-    )
-    ax.axvline(
-        s_max,
-        color="#7a5195",
-        linewidth=0.9,
-        linestyle="-.",
-    )
-    if np.isfinite(s_zmax):
-        ax.axvline(
-            s_zmax,
-            color="#ef8a62",
-            linewidth=0.9,
-            linestyle=":",
-        )
-    ax.axhline(0.0, color="black", linewidth=0.6)
-    ax.set_xscale("log")
-    ax.set_yscale("symlog", linthresh=1.0, linscale=0.8)
-    ax.set(
-        xlabel=r"$s$",
-        ylabel=r"$F(s)$ (symlog)",
-        xlim=(1.0e-3, 1.0e5),
-        ylim=(-4.0e6, 5.0),
-        title="(c) Large-$s$ implementation window",
-    )
-    ax.text(
-        s_max,
-        3.6,
-        rf"$s$ cap: {s_max:.0f}",
-        color="#7a5195",
-        fontsize=6.2,
-        ha="right",
-        va="top",
-        bbox={"boxstyle": "round,pad=0.15", "fc": "white", "ec": "none", "alpha": 0.86},
-    )
-    if np.isfinite(s_zmax):
-        ax.text(
-            s_zmax,
-            2.5,
-            r"$z$ cap",
-            color="#c65f3c",
-            fontsize=6.2,
-            ha="left",
-            va="top",
-            bbox={"boxstyle": "round,pad=0.15", "fc": "white", "ec": "none", "alpha": 0.86},
-        )
-    handles, labels = ax.get_legend_handles_labels()
-    fig.legend(
-        handles,
-        labels,
-        loc="outside lower right",
-        ncol=3,
-        fontsize=6.7,
-        framealpha=0.9,
-    )
-
-    fig.suptitle(
-        "GP93 building block and regularized crossover",
-        fontsize=10.0,
-    )
-    output = FIGURE_DIR / "fig_gp93_building_block.png"
-    fig.savefig(output, **SAVEFIG_OPTIONS)
-    plt.close(fig)
-    return output
 
 
 def plot_hydrogen_regularization(
@@ -577,7 +278,7 @@ def plot_hydrogen_regularization(
         ylim=(-0.08, 1.60),
         title="Exact-H intermediate range and regularized far tail",
     )
-    ax.legend(loc="upper left", fontsize=7.4, framealpha=0.93)
+    ax.legend(markerfirst=False, loc="upper left", fontsize=7.4, framealpha=0.93)
 
     ax = axes[1]
     ax.plot(
@@ -642,7 +343,7 @@ def plot_analytic() -> tuple[Path, ...]:
     require_files((building_path, hydrogen_path), "analytic")
     s0, p_switch, n_high, n_low, s_max = _analytic_parameters("analytic")
     return (
-        plot_gp93_building_block(read_csv(building_path), s0, p_switch),
+        *plot_gp93_building_block(read_csv(building_path), s0, p_switch),
         plot_hydrogen_regularization(
             read_csv(hydrogen_path),
             n_high,
@@ -658,7 +359,7 @@ def plot_fig_gp93_building_block() -> tuple[Path, ...]:
     s0, p_switch, _, _, _ = _analytic_parameters(
         "fig-gp93-building-block"
     )
-    return (plot_gp93_building_block(read_csv(result_path), s0, p_switch),)
+    return plot_gp93_building_block(read_csv(result_path), s0, p_switch)
 
 
 def plot_fig_hydrogen_regularization() -> tuple[Path, ...]:
@@ -978,7 +679,7 @@ def plot_he_comparison(rows: list[dict[str, str]]) -> Path:
     ax.set_ylim(0, max(max(values), experimental_ip) + 4.5)
     ax.set_title("He exchange-only comparison (RKS)")
     ax.grid(axis="y", alpha=0.20)
-    ax.legend(loc="upper left", fontsize=7.2)
+    ax.legend(markerfirst=False, loc="upper left", fontsize=7.2)
     output = FIGURE_DIR / "fig_he_comparison.png"
     fig.savefig(output, **SAVEFIG_OPTIONS)
     plt.close(fig)
@@ -1016,7 +717,133 @@ def plot_fig_he_comparison() -> tuple[Path, ...]:
     return (plot_he_comparison(read_csv(result_path)),)
 
 
+
+
+
+
+def plot_calibration() -> tuple[Path, ...]:
+    """Five-system MAE versus the outer-switch scale s0 (one column)."""
+
+    result_path = RESULTS_DIR / "calibration" / "calibration_results.json"
+    require_files((result_path,), "calibration")
+    document = read_json(result_path)
+    scan = document.get("scan")
+    if not isinstance(scan, list) or not scan:
+        raise ValueError("calibration_results.json has no non-empty 'scan' array")
+    valid = [point for point in scan if point.get("mae_5system_eV") is not None]
+    if len(valid) != len(scan):
+        raise ValueError("calibration scan contains a point without an MAE")
+    x = np.asarray([float(point["s0"]) for point in valid])
+    y = np.asarray([float(point["mae_5system_eV"]) for point in valid])
+    minimum = int(np.argmin(y))
+
+    figstyle.apply()
+    fig, ax = plt.subplots(figsize=(figstyle.COLUMN_IN, 2.3), layout="constrained")
+    ax.plot(x, y, color=figstyle.BLACK, lw=figstyle.LINE_WIDTH["thin"],
+            marker="o", ms=4.0, mfc="white", mec=figstyle.BLACK, mew=0.8)
+    ax.plot([x[minimum]], [y[minimum]], ls="none", marker="o", ms=4.0,
+            mfc=figstyle.RED, mec=figstyle.RED)
+    ax.set_xlabel(r"$s_0$")
+    ax.set_ylabel(r"MAE of $-\varepsilon_{\rm HOMO}$ (eV)")
+    ax.set_xlim(0.10, 0.37)
+    ax.set_ylim(0.75, 1.05)
+    ax.minorticks_on()
+    outputs = figstyle.save(fig, FIGURE_DIR / "fig_calibration")
+    plt.close(fig)
+    return outputs
+
+
+def plot_gp93_building_block(
+    rows: list[dict[str, str]],
+    s0: float,
+    p_switch: int,
+) -> tuple[Path, ...]:
+    """w(z), the crossover region of F(s), and the large-s branch (full page)."""
+
+    data = columns(rows, "s", "z_raw", "F_PBE", "F_GP93_bare_analytic",
+                   "F_GP93_fmix_py_zclipped", "Fmix_direct_selected_parameters")
+    order = np.argsort(data["s"])
+    for name in data:
+        data[name] = data[name][order]
+    s = data["s"]
+    z = data["z_raw"]
+    w_bare = data["F_GP93_bare_analytic"] / (8.0 * math.pi / 3.0 * s)
+
+    figstyle.apply()
+    fig, axes = plt.subplots(1, 3, figsize=(figstyle.PAGE_IN, 2.35),
+                             layout="constrained",
+                             gridspec_kw={"width_ratios": [1.0, 1.0, 1.0]})
+    ax = axes[0]
+    series = (z >= -6.0) & (z <= 0.0)
+    exact = (z > 0.0) & (z <= 12.0)
+    asymptotic = (z >= 12.0) & (z <= 30.0)
+    ax.plot(z[series], w_bare[series], color=figstyle.BLUE, ls=(0, (5, 2)),
+            lw=figstyle.LINE_WIDTH["main"], label=r"series, $z\leq0$")
+    ax.plot(z[exact], w_bare[exact], color=figstyle.RED, ls="-",
+            lw=figstyle.LINE_WIDTH["main"], label=r"exact, $0<z\leq12$")
+    ax.plot(z[asymptotic], w_bare[asymptotic], color=figstyle.GREEN,
+            ls=(0, (1.2, 1.5)), lw=figstyle.LINE_WIDTH["main"] + 0.4,
+            label="asymptotic")
+    zero = int(np.argmin(np.abs(z)))
+    ax.plot([0.0], [w_bare[zero]], ls="none", marker="o", ms=3.5,
+            mfc=figstyle.BLACK, mec=figstyle.BLACK)
+    ax.axhline(0.0, color=figstyle.BLACK, lw=figstyle.LINE_WIDTH["axis"])
+    ax.set_xlim(-6.0, 30.0)
+    ax.set_ylim(-2.4, 1.6)
+    ax.set_xlabel(r"$z$")
+    ax.set_ylabel(r"$w(z)$")
+    ax.legend(markerfirst=False, loc="upper right")
+    figstyle.panel_label(ax, "(a)")
+
+    ax = axes[1]
+    detail = (s >= 1.0e-2) & (s <= 4.0)
+    ax.plot(s[detail], data["F_PBE"][detail], **figstyle.STYLE["PBE"], label="PBE")
+    ax.plot(s[detail], data["F_GP93_bare_analytic"][detail],
+            **figstyle.STYLE["bare"], label=r"$F_{\rm GP93}$")
+    ax.plot(s[detail], data["Fmix_direct_selected_parameters"][detail],
+            **figstyle.STYLE["GP93"], label=r"$F_{\rm mix}$")
+    ax.axvline(s0, color=figstyle.GRAY, lw=figstyle.LINE_WIDTH["thin"], ls=":")
+    ax.axvline((6.0 * math.pi) ** (-1.0 / 3.0), color=figstyle.BLACK,
+               lw=figstyle.LINE_WIDTH["thin"], ls=":")
+    ax.axhline(0.0, color=figstyle.BLACK, lw=figstyle.LINE_WIDTH["axis"])
+    ax.set_xscale("log")
+    ax.set_xlim(1.0e-2, 4.0)
+    ax.set_ylim(-8.0, 3.0)
+    ax.set_xlabel(r"$s$")
+    ax.set_ylabel(r"$F(s)$")
+    ax.text(s0 * 0.93, -2.0, r"$s_0$", ha="right", fontsize=figstyle.FONT_SIZE["annotation"])
+    ax.text((6.0 * math.pi) ** (-1.0 / 3.0) * 1.07, -2.0, r"$s_{\rm H}$", ha="left",
+            fontsize=figstyle.FONT_SIZE["annotation"])
+    ax.legend(markerfirst=False, loc="lower left")
+    figstyle.panel_label(ax, "(b)")
+
+    ax = axes[2]
+    wide = (s >= 1.0e-3) & (s <= 1.0e5)
+    magnitude = np.abs(data["Fmix_direct_selected_parameters"])
+    ax.plot(s[wide], np.abs(data["F_GP93_bare_analytic"])[wide],
+            **figstyle.STYLE["bare"], label=r"$|F_{\rm GP93}|$")
+    ax.plot(s[wide], magnitude[wide], **figstyle.STYLE["GP93"], label=r"$|F_{\rm mix}|$")
+    ax.plot(s[wide], data["F_PBE"][wide], **figstyle.STYLE["PBE"], label="PBE")
+    large = np.logspace(1.0, 5.0, 200)
+    lead = 4.9014 * large * np.log(large) ** (2.0 / 3.0)
+    ax.plot(large, lead, color=figstyle.BLACK, lw=figstyle.LINE_WIDTH["thin"],
+            ls=(0, (3, 2)), label=r"$4.90\,s(\ln s)^{2/3}$")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlim(1.0e-3, 1.0e5)
+    ax.set_ylim(1.0e-2, 1.0e7)
+    ax.set_xlabel(r"$s$")
+    ax.set_ylabel(r"$|F(s)|$")
+    ax.legend(markerfirst=False, loc="upper left", bbox_to_anchor=(0.10, 1.0))
+    figstyle.panel_label(ax, "(c)")
+    outputs = figstyle.save(fig, FIGURE_DIR / "fig_gp93_building_block")
+    plt.close(fig)
+    return outputs
+
+
 def plot_h2() -> tuple[Path, ...]:
+    """H2 binding curves of GP93-LYP and FCI (one column)."""
+
     curve_path = RESULTS_DIR / "h2" / "h2_curve.csv"
     metadata_path = RESULTS_DIR / "h2" / "h2_metadata.json"
     require_files((curve_path, metadata_path), "h2")
@@ -1027,228 +854,217 @@ def plot_h2() -> tuple[Path, ...]:
     r = data["R_A"][order]
     e_fmix = data["Erel_fmix_eV"][order]
     e_fci = data["Erel_fci_eV"][order]
-    minima = metadata["spline_minima"]
-    re_fmix = float(minima["implemented_Fmix_LYP"]["R_A"])
-    emin_fmix = -float(minima["implemented_Fmix_LYP"]["depth_eV"])
-    re_fci = float(minima["FCI"]["R_A"])
-    emin_fci = -float(minima["FCI"]["depth_eV"])
-    reference = metadata["experimental_reference"]
-    experimental_re = float(reference["value"])
+    experimental_re = float(metadata["experimental_reference"]["value"])
+    fine = np.linspace(float(r.min()), float(r.max()),
+                       int(metadata["plot_interpolation_points"]))
 
-    plt.rcParams.update(PUBLICATION_PLOT_STYLE)
-    fine = np.linspace(
-        float(r.min()),
-        float(r.max()),
-        int(metadata["plot_interpolation_points"]),
-    )
-    fig, ax = plt.subplots(figsize=(3.40, 2.75), layout="constrained")
-    ax.plot(
-        fine,
-        CubicSpline(r, e_fci)(fine),
-        color="black",
-        lw=1.7,
-        label="FCI",
-    )
-    ax.plot(r, e_fci, "o", color="black", ms=4.5)
-    ax.plot(
-        fine,
-        CubicSpline(r, e_fmix)(fine),
-        color="#2166ac",
-        lw=1.9,
-        label=r"$F_{\rm mix}$+LYP",
-    )
-    ax.plot(r, e_fmix, "s", color="#2166ac", ms=4.5)
-    ax.axhline(0.0, color="0.45", lw=0.8, ls=":")
-    ax.axvline(
-        experimental_re,
-        color="#b2182b",
-        lw=1.0,
-        ls="--",
-        alpha=0.75,
-    )
-    ax.text(
-        experimental_re + 0.0046,
-        2.25,
-        rf"experimental $R_e={experimental_re:.4f}$ Å",
-        color="#b2182b",
-        rotation=90,
-        va="top",
-        fontsize=6.8,
-    )
-    ax.scatter([re_fmix], [emin_fmix], color="#2166ac", zorder=5)
-    ax.scatter([re_fci], [emin_fci], color="black", zorder=5)
-    ax.annotate(
-        (
-            rf"$R_e={re_fmix:.3f}$ Å"
-            "\n"
-            rf"$D_e={-emin_fmix:.2f}$ eV"
-        ),
-        xy=(re_fmix, emin_fmix),
-        xytext=(0.84, -1.45),
-        arrowprops={"arrowstyle": "->", "color": "#2166ac", "lw": 0.8},
-        color="#2166ac",
-        fontsize=7.0,
-    )
-    ax.annotate(
-        rf"FCI: $R_e={re_fci:.3f}$ Å, $D_e={-emin_fci:.2f}$ eV",
-        xy=(re_fci, emin_fci),
-        xytext=(0.98, -4.75),
-        arrowprops={"arrowstyle": "->", "color": "black", "lw": 0.8},
-        fontsize=7.0,
-    )
-    ax.set_xlim(0.48, 1.62)
-    ax.set_ylim(-5.3, 3.0)
-    ax.set_xlabel(r"$R$ (Å)")
+    figstyle.apply()
+    fig, ax = plt.subplots(figsize=(figstyle.COLUMN_IN, 2.45), layout="constrained")
+    ax.plot(fine, CubicSpline(r, e_fci)(fine), color=figstyle.BLACK,
+            lw=figstyle.LINE_WIDTH["secondary"], label="FCI")
+    ax.plot(r, e_fci, ls="none", marker="o", ms=3.2, mfc=figstyle.BLACK,
+            mec=figstyle.BLACK)
+    ax.plot(fine, CubicSpline(r, e_fmix)(fine), color=figstyle.RED,
+            lw=figstyle.LINE_WIDTH["main"], label="GP93-LYP")
+    ax.plot(r, e_fmix, ls="none", marker="s", ms=3.2, mfc="white", mec=figstyle.RED,
+            mew=0.8)
+    ax.axvline(experimental_re, color=figstyle.GRAY, lw=figstyle.LINE_WIDTH["thin"],
+               ls=(0, (1.2, 1.5)))
+    ax.axhline(0.0, color=figstyle.BLACK, lw=figstyle.LINE_WIDTH["axis"])
+    ax.set_xlim(0.45, 1.65)
+    ax.set_ylim(-5.2, 2.0)
+    ax.set_xlabel("$R$ (Å)")
     ax.set_ylabel(r"$E(R)-2E_{\rm H}$ (eV)")
-    ax.set_title(r"H$_2$ binding curves")
-    ax.legend(loc="upper right", fontsize=7.2)
-    output = FIGURE_DIR / "fig_h2.png"
-    fig.savefig(output, **SAVEFIG_OPTIONS)
+    ax.minorticks_on()
+    ax.legend(markerfirst=False, loc="upper right")
+    outputs = figstyle.save(fig, FIGURE_DIR / "fig_h2")
     plt.close(fig)
-    return (output,)
+    return outputs
 
 
 def plot_potentials() -> tuple[Path, ...]:
+    """-r v_x on fixed densities of H, He, and the Na valence electron (full page)."""
+
     result_path = RESULTS_DIR / "potentials" / "radial_potentials.csv"
     require_files((result_path,), "potentials")
     rows = read_csv(result_path)
     by_system: dict[str, list[dict[str, str]]] = {}
     for row in rows:
         by_system.setdefault(row["system"], []).append(row)
-    expected = (
-        "H_exact_density",
-        "He_RHF_aug_cc_pV5Z",
-        "Na_UHF_SBKJC_3s",
-    )
+    expected = ("H_exact_density", "He_RHF_aug_cc_pV5Z", "Na_UHF_SBKJC_3s")
     absent = [system for system in expected if system not in by_system]
     if absent:
         raise ValueError(f"radial_potentials.csv lacks systems {absent}")
 
-    def system_data(name: str) -> tuple[np.ndarray, ...]:
+    def system_data(name):
         system_rows = by_system[name]
-        data = columns(
-            system_rows,
-            "r_bohr",
-            "minus_r_vx_hydrogen_exact_gp93",
-            "minus_r_vx_implemented",
-            "minus_r_vx_pbe_x",
-            "minus_r_vx_self_interaction_free_reference",
-        )
+        data = columns(system_rows, "r_bohr", "minus_r_vx_hydrogen_exact_gp93",
+                       "minus_r_vx_implemented", "minus_r_vx_pbe_x",
+                       "minus_r_vx_self_interaction_free_reference")
         order = np.argsort(data["r_bohr"])
-        mask = np.asarray(
-            [as_bool(row["density_threshold_mask"]) for row in system_rows],
-            dtype=bool,
-        )[order]
-        return (
-            data["r_bohr"][order],
-            data["minus_r_vx_hydrogen_exact_gp93"][order],
-            data["minus_r_vx_implemented"][order],
-            data["minus_r_vx_pbe_x"][order],
-            data["minus_r_vx_self_interaction_free_reference"][order],
-            mask,
-        )
+        mask = np.asarray([as_bool(row["density_threshold_mask"])
+                           for row in system_rows], dtype=bool)[order]
+        return (data["r_bohr"][order], data["minus_r_vx_hydrogen_exact_gp93"][order],
+                data["minus_r_vx_implemented"][order], data["minus_r_vx_pbe_x"][order],
+                data["minus_r_vx_self_interaction_free_reference"][order], mask)
 
-    r_h, design_h, impl_h, pbe_h, ref_h, mask_h = system_data(expected[0])
-    r_he, _, impl_he, pbe_he, ref_he, mask_he = system_data(expected[1])
-    r_na, _, impl_na, pbe_na, ref_na, mask_na = system_data(expected[2])
+    figstyle.apply()
+    fig, axes = plt.subplots(1, 3, figsize=(figstyle.PAGE_IN, 2.3), layout="constrained")
+    limits = (((0.0, 15.0), (-0.1, 1.4)), ((0.0, 3.3), (0.0, 1.2)), ((3.2, 5.5), (0.0, 1.2)))
+    names = ("H", "He", "Na")
+    for k, (system, ax) in enumerate(zip(expected, axes)):
+        r, block, impl, pbe, ref, mask = system_data(system)
+        ax.plot(r, ref, color=figstyle.BLACK, lw=figstyle.LINE_WIDTH["main"] + 0.6,
+                label="reference")
+        if k == 0:
+            ax.plot(r[mask], block[mask], **figstyle.STYLE["bare"],
+                    label="building block")
+        ax.plot(r[mask], impl[mask], **figstyle.STYLE["GP93"], label="GP93")
+        ax.plot(r[mask], pbe[mask], **figstyle.STYLE["PBE"], label="PBE")
+        ax.set_xlim(*limits[k][0])
+        ax.set_ylim(*limits[k][1])
+        ax.set_xlabel(r"$r$ (bohr)")
+        if k == 0:
+            ax.set_ylabel(r"$-r\,v_{\rm x}(r)$")
+            handles, labels = ax.get_legend_handles_labels()
+        ax.minorticks_on()
+        figstyle.panel_label(ax, f"({'abc'[k]}) {names[k]}")
+    axes[2].legend(handles, labels, markerfirst=False, loc="lower right")
+    outputs = figstyle.save(fig, FIGURE_DIR / "fig_radial_potentials")
+    plt.close(fig)
+    return outputs
 
-    plt.rcParams.update(PUBLICATION_PLOT_STYLE)
-    fig, axes = plt.subplots(
-        1,
-        3,
-        figsize=(7.05, 3.00),
-        sharey=False,
-        layout="constrained",
-    )
+
+def plot_radial() -> tuple[Path, ...]:
+    """Bound virtual levels from the basis-free radial solver (full page)."""
+
+    levels_path = RESULTS_DIR / "radial" / "radial_levels.csv"
+    exact_path = ROOT / "data" / "he_exact_ks_levels.csv"
+    require_files((levels_path, exact_path), "radial")
+    rows = read_csv(levels_path)
+    he_exact = {0: [], 1: [], 2: []}
+    for row in read_csv(exact_path):
+        l = "spd".find(row["level"][-1])
+        if row["level"] != "1s" and 0 <= l <= 2 and int(row["level"][0]) <= 3:
+            he_exact[l].append(as_float(row, "energy_ha"))
+    h_exact = {0: [-0.125, -1.0 / 18.0], 1: [-0.125, -1.0 / 18.0], 2: [-1.0 / 18.0]}
+    # Solid bars: angular momentum is shown by color and by a fixed slot within
+    # each column, labeled s, p, d above the zero line (short bars cannot show a
+    # dash pattern legibly).
+    level_color = {0: figstyle.RED, 1: figstyle.BLUE, 2: figstyle.GREEN}
+    columns_ = (("PBE-x", "PBE_X"), ("GP93-x", "GP93_X"), ("GP93R-x", "GP93R_X"))
+    bar_lw = figstyle.LINE_WIDTH["main"] + 0.7
+
+    figstyle.apply()
+    fig, axes = plt.subplots(1, 2, figsize=(figstyle.PAGE_IN, 2.5), sharey=True,
+                             layout="constrained")
+    for panel, (system, exact, exact_label) in enumerate(
+            (("H", h_exact, "exact"), ("He", he_exact, "exact KS"))):
+        ax = axes[panel]
+
+        def slot(column, l):
+            return column + 0.2 + 0.25 * l
+
+        def bar(column, l, energy, marginal=False):
+            x0 = slot(column, l)
+            if marginal:
+                ax.plot([x0 - 0.1, x0 + 0.1], [energy, energy], color=figstyle.GRAY,
+                        lw=figstyle.LINE_WIDTH["thin"], ls=":")
+            else:
+                ax.plot([x0 - 0.1, x0 + 0.1], [energy, energy], color=level_color[l],
+                        lw=bar_lw, ls="-", solid_capstyle="butt")
+
+        for i, (_label, key) in enumerate(columns_):
+            for row in rows:
+                if row["system"] == system and row["functional"] == key:
+                    bar(i, int(row["l"]), as_float(row, "energy_ha"),
+                        as_bool(row["above_reported_threshold"]))
+        for l, values in exact.items():
+            for e in values:
+                bar(3, l, e)
+        for column in range(4):
+            for l, name in ((0, "s"), (1, "p"), (2, "d")):
+                ax.text(slot(column, l), 0.0035, name, ha="center", va="bottom",
+                        color=level_color[l], fontsize=figstyle.FONT_SIZE["annotation"])
+            if column > 0:
+                ax.axvline(column - 0.05, color=figstyle.GRAY,
+                           lw=figstyle.LINE_WIDTH["thin"], ls=(0, (1, 2)))
+        ax.set_xticks([i + 0.45 for i in range(4)])
+        ax.set_xticklabels([c[0] for c in columns_] + [exact_label])
+        ax.tick_params(axis="x", which="both", length=0)
+        ax.axhline(0.0, color=figstyle.BLACK, lw=figstyle.LINE_WIDTH["axis"])
+        ax.set_xlim(-0.1, 4.0)
+        figstyle.panel_label(ax, f"({'ab'[panel]}) {system}", y=0.06)
+    axes[0].set_ylabel("virtual eigenvalue (Ha)")
+    axes[0].set_ylim(-0.17, 0.016)
+    axes[0].yaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(0.01))
+    outputs = figstyle.save(fig, FIGURE_DIR / "fig_spectrum")
+    plt.close(fig)
+    return outputs
+
+
+def plot_stability() -> tuple[Path, ...]:
+    """F(s), local stability thresholds, and -r v_x on H (full page)."""
+
+    curves_path = RESULTS_DIR / "analytic" / "stability_curves.csv"
+    meta_path = RESULTS_DIR / "analytic" / "stability_metadata.json"
+    pot_path = RESULTS_DIR / "analytic" / "gp93r_hydrogen_potential.csv"
+    require_files((curves_path, meta_path, pot_path), "stability")
+    c = columns(read_csv(curves_path), "s", "m_c_pbe", "m_c_gp93", "m_c_gp93r",
+                "F_pbe", "F_gp93", "F_gp93r")
+    meta = read_json(meta_path)
+    p = columns(read_csv(pot_path), "r_bohr", "r_vH", "minus_r_vx_gp93",
+                "minus_r_vx_gp93r", "minus_r_vx_pbe")
+    s_h = float(meta["s_H"])
+
+    figstyle.apply()
+    fig, axes = plt.subplots(1, 3, figsize=(figstyle.PAGE_IN, 2.35), layout="constrained")
     ax = axes[0]
-    ax.plot(r_h, ref_h, color="#b2182b", lw=2.2, label=r"exact $-rv_H$")
-    ax.plot(
-        r_h[mask_h],
-        design_h[mask_h],
-        color="#238b45",
-        lw=1.8,
-        ls="--",
-        label="GP93 building block (H-exact)",
-    )
-    ax.plot(r_h[mask_h], impl_h[mask_h], color="#2166ac", lw=1.8, label="implemented")
-    ax.plot(
-        r_h[mask_h],
-        pbe_h[mask_h],
-        color="0.45",
-        lw=1.4,
-        ls="--",
-        label="PBE-X",
-    )
-    ax.axhline(1.0, color="0.2", lw=0.7, ls=":")
-    ax.set_xlim(0.0, 15.0)
-    ax.set_title("H")
-    ax.set_xlabel(r"$r$ (bohr)")
-    ax.set_ylabel(r"$-r\,v_x(r)$")
-    ax.set_ylim(-0.12, 2.65)
-    ax.legend(fontsize=6.9)
+    lin = c["s"] <= 1.5
+    ax.plot(c["s"][lin], c["F_pbe"][lin], **figstyle.STYLE["PBE"], label="PBE")
+    ax.plot(c["s"][lin], c["F_gp93"][lin], **figstyle.STYLE["GP93"], label="GP93")
+    ax.plot(c["s"][lin], c["F_gp93r"][lin], **figstyle.STYLE["GP93R"], label="GP93R")
+    for x0, text in ((s_h, r"$s_{\rm H}$"), (0.5, r"$s_1$")):
+        ax.axvline(x0, color=figstyle.GRAY, lw=figstyle.LINE_WIDTH["thin"], ls=":")
+        ax.text(x0 + 0.02, 0.12, text, fontsize=figstyle.FONT_SIZE["annotation"])
+    ax.set_xlim(0.0, 1.5)
+    ax.set_ylim(0.0, 2.5)
+    ax.set_xlabel(r"$s$")
+    ax.set_ylabel(r"$F(s)$")
+    ax.legend(markerfirst=False, loc="lower right", bbox_to_anchor=(1.0, 0.12))
+    ax.minorticks_on()
+    figstyle.panel_label(ax, "(a)")
 
     ax = axes[1]
-    ax.plot(r_he, ref_he, color="#b2182b", lw=2.2, label=r"$rv_H[n]/2$")
-    ax.plot(r_he[mask_he], impl_he[mask_he], color="#2166ac", lw=1.8, label="implemented")
-    ax.plot(
-        r_he[mask_he],
-        pbe_he[mask_he],
-        color="0.45",
-        lw=1.4,
-        ls="--",
-        label="PBE-X",
-    )
-    ax.set_xlim(0.0, 3.3)
-    ax.set_title("He")
-    ax.set_xlabel(r"$r$ (bohr)")
-    ax.set_ylim(-0.05, 1.25)
-    ax.text(
-        0.97,
-        0.07,
-        r"red: $rv_H[n]/2$",
-        transform=ax.transAxes,
-        color="#b2182b",
-        fontsize=6.8,
-        ha="right",
-        va="bottom",
-    )
+    ax.axhspan(1.0e-3, 1.0, color="#e4e4e4", lw=0)
+    ax.plot(c["s"], c["m_c_pbe"], **figstyle.STYLE["PBE"], label="PBE")
+    ax.plot(c["s"], c["m_c_gp93"], **figstyle.STYLE["GP93"], label="GP93")
+    ax.plot(c["s"], c["m_c_gp93r"], **figstyle.STYLE["GP93R"], label="GP93R")
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlim(1.0e-2, 3.0)
+    ax.set_ylim(1.0e-6, 1.0e6)
+    ax.set_xlabel(r"$s$")
+    ax.set_ylabel(r"$m_{\rm c}(s)$ (bohr$^{-3}$)")
+    ax.legend(markerfirst=False, loc="upper right")
+    figstyle.panel_label(ax, "(b)")
 
     ax = axes[2]
-    ax.plot(r_na, ref_na, color="#b2182b", lw=2.2, label=r"$rv_H[n]$")
-    ax.plot(r_na[mask_na], impl_na[mask_na], color="#2166ac", lw=1.8, label="implemented")
-    ax.plot(
-        r_na[mask_na],
-        pbe_na[mask_na],
-        color="0.45",
-        lw=1.4,
-        ls="--",
-        label="PBE-X",
-    )
-    ax.set_xlim(3.2, 5.5)
-    ax.set_title("Na (ECP 3s)")
+    ax.plot(p["r_bohr"], p["r_vH"], color=figstyle.BLACK,
+            lw=figstyle.LINE_WIDTH["main"] + 0.6, label=r"$r\,v_{\rm H}$")
+    ax.plot(p["r_bohr"], p["minus_r_vx_gp93"], **figstyle.STYLE["GP93"], label="GP93")
+    ax.plot(p["r_bohr"], p["minus_r_vx_gp93r"], **figstyle.STYLE["GP93R"], label="GP93R")
+    ax.plot(p["r_bohr"], p["minus_r_vx_pbe"], **figstyle.STYLE["PBE"], label="PBE")
+    ax.set_xlim(0.0, 15.0)
+    ax.set_ylim(-0.1, 1.75)
     ax.set_xlabel(r"$r$ (bohr)")
-    ax.set_ylim(-0.05, 1.25)
-    ax.text(
-        0.97,
-        0.07,
-        r"red: $rv_H[n]$",
-        transform=ax.transAxes,
-        color="#b2182b",
-        fontsize=6.8,
-        ha="right",
-        va="bottom",
-    )
-    for ax in axes:
-        ax.axhline(0.0, color="0.25", lw=0.5)
-        ax.grid(alpha=0.15)
-    fig.suptitle(
-        "Intermediate-range exchange potentials",
-        fontsize=10.0,
-    )
-    output = FIGURE_DIR / "fig_radial_potentials.png"
-    fig.savefig(output, **SAVEFIG_OPTIONS)
+    ax.set_ylabel(r"$-r\,v_{\rm x}(r)$")
+    ax.legend(markerfirst=False, loc="upper right")
+    ax.minorticks_on()
+    figstyle.panel_label(ax, "(c)")
+    outputs = figstyle.save(fig, FIGURE_DIR / "fig_realspace")
     plt.close(fig)
-    return (output,)
+    return outputs
 
 
 PLOTTERS = {
@@ -1257,6 +1073,8 @@ PLOTTERS = {
     "atomic": plot_atomic,
     "h2": plot_h2,
     "potentials": plot_potentials,
+    "radial": plot_radial,
+    "stability": plot_stability,
 }
 
 DIRECT_PLOTTERS = {
@@ -1268,6 +1086,8 @@ DIRECT_PLOTTERS = {
     "fig-he-comparison": plot_fig_he_comparison,
     "fig-h2": plot_h2,
     "fig-radial-potentials": plot_potentials,
+    "fig-spectrum": plot_radial,
+    "fig-realspace": plot_stability,
 }
 
 TARGET_PLOTTERS = {**PLOTTERS, **DIRECT_PLOTTERS}

@@ -1,0 +1,9 @@
+{
+  "s_H": 0.3757505505956089,
+  "F_GP93_at_s_H": 2.169796189213299,
+  "c0": 0.68928799,
+  "hydrogen_exact_bound_max_F1_over_s": 16.570703503481397,
+  "hydrogen_exact_bound_m_c": 2.0909132363065424,
+  "one_minus_chi_at_s_H_exponent": 925.2032376715008,
+  "fd_check_d2e_dg2_max_relative_error": 7.512536451716665e-08
+}
