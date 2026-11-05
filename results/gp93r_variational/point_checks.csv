@@ -1,0 +1,10 @@
+class,points,max_rel_diff_vs_canonical,fd_err_vn_s_le_5,fd_err_vgamma_s_le_5,fd_err_vtau_s_le_5,fd_err_max_all_s,points_zeroed_window_not_rsdft
+"iso-orbital, window open",222,5.722e-15,2.016e-08,6.376e-08,3.806e-08,4.196e-04,0
+alpha != 0 (gate edge),222,1.171e-14,8.004e-08,4.362e-08,6.656e-08,7.987e-05,0
+alpha large (PBE),222,4.766e-16,5.947e-11,5.088e-11,8.689e-12,2.511e-09,0
+inside density window,222,1.110e-15,6.448e-09,2.719e-08,8.563e-09,1.732e-04,0
+join s1 = 0.5,222,4.396e-14,6.212e-11,5.869e-12,4.563e-12,6.212e-11,0
+small q (s near s_min),222,4.132e-16,4.730e-12,3.917e-12,2.064e-12,4.730e-12,0
+large s (negative branch),222,5.240e-16,nan,nan,nan,3.638e+00,0
+tau < tau_W (alpha clipped),222,1.874e-15,2.989e-10,2.965e-10,0.000e+00,9.193e-09,0
+below window (PBE only),222,0.000e+00,0.000e+00,0.000e+00,0.000e+00,0.000e+00,222

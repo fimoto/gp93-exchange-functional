@@ -76,6 +76,10 @@ constants are stored in `functional/parameters.json`.
 - `calculations/potentials/`: common-density radial-potential diagnostics.
 - `calculations/radial/`: basis-free radial exchange-only Kohn--Sham spectra
   of H and He (PBE, GP93, GP93R).
+- `calculations/gp93r_variational/`: the fully variational tau-dependent
+  GP93R (gate differentiated) against the frozen gate: point derivatives,
+  the GKS matrix under orbital rotations, and matched exchange-only SCF
+  (`functional/gp93r_variational.py`).
 - `calculations/analytic/run_stability.py`: local (Legendre--Hadamard)
   stability thresholds of the enhancement factors and GP93R comparison data.
 - `calculations/atomic/run_he_hybrids.py`: He with standard and global-hybrid

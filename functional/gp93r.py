@@ -15,7 +15,15 @@ repository:
 
 The third and fourth real-space changes (a frozen gate and the gauge-invariant
 orbital von Weizsaecker density) do not change anything for one orbital per
-spin, where ``alpha = 0`` exactly; they are not represented here.
+spin, where ``alpha = 0`` exactly; they are not represented here.  The
+callback under ``use_gp93r`` differentiates the gate (density-based tau_W),
+i.e. it is the fully variational tau-dependent GP93R; ``gp93r_variational``
+adds the frozen-gate variant for matched comparisons.
+
+``use_gp93r`` also sets ``DENSITY_CUTOFF`` to the window low end, so the whole
+exchange channel, including its PBE part, is zero for n_s < 1e-6.  RSDFT/OFDFT
+keeps the canonical cutoff 1e-12, so the two implementations differ below the
+window by the PBE exchange of the low-density tail.
 
 The same construction is used by ``tools/gp93/make_gp93r_table.py`` in
 RSDFT/OFDFT.  The minimax problem has a degenerate optimum (a plateau of

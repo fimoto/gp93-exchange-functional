@@ -2,6 +2,7 @@
 	potentials h2 h2-grid he-hybrids stability radial radial-variants \
 	fig-spectrum fig-realspace fig-calibration fig-gp93-building-block \
 	fig-hydrogen-regularization fig-atomic-systematics fig-he-levels \
+	gp93r-variational \
 	fig-he-comparison fig-radial-potentials fig-h2 fig-all validate \
 	postprocess integration
 
@@ -21,6 +22,7 @@ help:
 	@echo "  make stability                   local stability thresholds, GP93R data"
 	@echo "  make radial                      basis-free radial H/He spectra"
 	@echo "  make radial-variants             GP93R ablation and CAP exchange, radial"
+	@echo "  make gp93r-variational           fully variational vs frozen-gate GP93R checks"
 	@echo "  make <fig-...>                   one figure from saved data"
 	@echo "  make validate                    cross-file scientific checks"
 	@echo "Paper-table values are direct CSV outputs; see results/README.md."
@@ -64,6 +66,9 @@ radial:
 
 radial-variants:
 	python calculations/radial/run_radial_variants.py
+
+gp93r-variational:
+	python calculations/gp93r_variational/run_gp93r_variational.py
 
 fig-calibration:
 	python calculations/plot_results.py fig-calibration

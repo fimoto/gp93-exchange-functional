@@ -1,0 +1,7 @@
+system,density,points,electrons,n_s_min,n_s_max,s_min,s_max,alpha_min,alpha_max,all_on_D_negative,min_1_plus_vtau
+H,frozen-gate SCF,0,0.0000,,,,,,,,1.0000e+00
+He,frozen-gate SCF,0,0.0000,,,,,,,,1.0000e+00
+H2,frozen-gate SCF,0,0.0000,,,,,,,,1.0000e+00
+Be,frozen-gate SCF,18376,0.5002,1.96e-06,4.45e-01,1.239,15.296,0.0005,0.1622,True,-1.1410e+02
+Ne,frozen-gate SCF,0,0.0000,,,,,,,,1.0000e+00
+CH4,frozen-gate SCF,22568,0.7212,2.42e-05,2.28e-02,1.060,10.139,0.0316,0.2901,True,-1.5385e+02

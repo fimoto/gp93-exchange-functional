@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "purpose": "Checks of the fully variational tau-dependent GP93R (density-based tau_W, gate differentiated) of the variational GKS working note: point derivatives, the GKS matrix under orbital rotations, and matched frozen-gate vs fully variational exchange-only SCF.",
+  "note": "GP93R is functional/gp93r.py (F_R with s1 = 0.5, D = 800; density window 1e-6 to 1e-4). The frozen gate omits the gate derivative (H_alpha terms, v_tau = 0) and is not variational. Non-converged SCF cases are reported, not removed.",
+  "point_checks": {
+    "points_per_class": 222,
+    "seed": 20261105,
+    "fd_relative_step": 1.0e-4,
+    "fd_alpha_step_over_w": 1.0e-3,
+    "fd_pass_s_max": 5.0,
+    "fd_tolerance": 1.0e-6,
+    "canonical_tolerance": 1.0e-10
+  },
+  "gks_directional": {
+    "systems": ["H", "He", "H2", "Be", "Ne", "CH4"],
+    "basis": "cc-pvtz",
+    "grid_level": 4,
+    "reference_orbitals": "PBE exchange-correlation SCF",
+    "rotation_seed": 5,
+    "theta": [2.5e-4, 1.25e-4],
+    "tolerance": 1.0e-6
+  },
+  "scf": {
+    "systems": ["H", "He", "H2", "Be", "Ne", "CH4"],
+    "basis": "aug-cc-pvtz",
+    "grid_level": 5,
+    "conv_tol": 1.0e-9,
+    "max_cycle": 200,
+    "initial_density": "PBE exchange-only SCF",
+    "gates": ["frozen", "variational"]
+  },
+  "geometries_angstrom": {
+    "H": {"atom": "H 0 0 0", "spin": 1},
+    "He": {"atom": "He 0 0 0", "spin": 0},
+    "Be": {"atom": "Be 0 0 0", "spin": 0},
+    "Ne": {"atom": "Ne 0 0 0", "spin": 0},
+    "H2": {"atom": "H 0 0 0; H 0 0 0.7414", "spin": 0},
+    "CH4": {"atom": "C 0 0 0; H 0.6291 0.6291 0.6291; H -0.6291 -0.6291 0.6291; H -0.6291 0.6291 -0.6291; H 0.6291 -0.6291 -0.6291", "spin": 0}
+  }
+}

@@ -1,0 +1,110 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=23mm]{geometry}
+\usepackage{amsmath,amssymb,bm,hyperref,booktabs}
+\newcommand{\dd}{\,d^3r}
+\newcommand{\grad}{\boldsymbol\nabla}
+\title{Fully Variational $\tau$-Dependent GP93R:\\Spin-Resolved Exchange Derivatives and Generalized Kohn--Sham Equations}
+\author{Fumihiro Imoto\\Working theory and implementation note}
+\date{November 5, 2026}
+\begin{document}\maketitle
+\begin{abstract}
+We derive the complete first variation of the standard $\tau$-dependent GP93R exchange functional, including exchange spin scaling, the logarithmic density switch, and the iso-orbital gate. We distinguish the conventional density-based von Weizs\"acker descriptor, which fits the standard meta-GGA generalized Kohn--Sham (GKS) framework, from an explicitly orbital/current-dependent descriptor requiring additional variation. The formulas provide a reference for PySCF implementation and finite-difference tests. No new self-consistent GP93R result is claimed.
+\end{abstract}
+\tableofcontents
+\section{Definitions and provenance}
+The original Gill--Pople hydrogen-exact GGA and the subsequently constructed meta-GGA called GP93 are distinct. GP93R denotes the later regularized construction. The existing repository's \texttt{functional/mgga\_fmix.py} implements a spin-resolved meta-GGA callback; \texttt{functional/gp93r.py} constructs the GP93R small-gradient curve and changes the density window. Frozen-gate and orbital-current variants used in some real-space calculations must not be confused with the conventional fully differentiated $\tau$-dependent functional derived here.
+
+Use atomic units and the orbital kinetic energy convention
+\begin{equation}
+n_\sigma=\sum_i f_{i\sigma}|\phi_{i\sigma}|^2,\quad
+\gamma_\sigma=|\grad n_\sigma|^2,\quad
+\tau_\sigma=\frac12\sum_i f_{i\sigma}|\grad\phi_{i\sigma}|^2.
+\end{equation}
+Exact exchange spin scaling is implemented by the parent variables
+\begin{equation}
+m=2n_\sigma,\qquad q=4\gamma_\sigma,\qquad t=2\tau_\sigma.
+\end{equation}
+Set
+\begin{align}
+A_x&=-\tfrac34(3/\pi)^{1/3},& C_1&=(3\pi^2)^{1/3},\\
+C_F&=\tfrac3{10}(3\pi^2)^{2/3},&s&=\frac{\sqrt q}{2C_1m^{4/3}},\\
+t_W&=\frac{q}{8m},&t_U&=C_Fm^{5/3},&
+\alpha&=\frac{t-t_W}{t_U}.
+\end{align}
+For the PBE enhancement factor $P(s)$, the regularized factor $R(s)=F_R(s)$, and $D(s)=R(s)-P(s)$, define
+\begin{equation}
+H=P(s)+X(n_\sigma)G(\alpha)D(s),\qquad G(\alpha)=\exp[-(\alpha/w)^2].
+\end{equation}
+The spin-scaled exchange energy is
+\begin{equation}\boxed{E_x=\sum_\sigma\int f_\sigma\dd,\qquad f_\sigma=\frac12A_xm^{4/3}H.}\label{eq:energy}\end{equation}
+The density window $X$ is the cubic smoothstep in logarithmic \emph{spin} density: with $L=\log(n_H/n_L)$ and $u=\log(n_\sigma/n_L)/L$,
+\begin{equation}
+X=\begin{cases}0&n_\sigma\le n_L,\\3u^2-2u^3&n_L<n_\sigma<n_H,\\1&n_\sigma\ge n_H,\end{cases}\quad
+X'=\frac{6u(1-u)}{Ln_\sigma}\quad\text{(inside window)}.
+\end{equation}
+The documented GP93R window is $n_L=10^{-6}$, $n_H=10^{-4}$ (atomic density units). The existing real-space interpolation obeys $R(0)=1$, $R'(0)=0$, $R''(0)=2\mu_{\rm PBE}$ and matches $F_{\rm mix}$ through second derivative at $s_1=0.5$. Its curvature is minimized subject to a bound on the third derivative. These are implementation choices, not new exact conditions.
+
+\section{Complete chain rule}
+Let $B=\tfrac12A_xm^{4/3}$ and introduce
+\begin{equation}H_s=P'(s)+XG D'(s),\qquad H_\alpha=XG'(\alpha)D(s),\qquad G'=-\frac{2\alpha}{w^2}G.\end{equation}
+At fixed independent parent variables $(m,q,t)$,
+\begin{align}
+s_m&=-\frac{4s}{3m},&s_q&=\frac{s}{2q},&s_t&=0,\\
+\alpha_m&=\frac{t_W}{mt_U}-\frac{5\alpha}{3m},&
+\alpha_q&=-\frac1{8mt_U},&\alpha_t&=\frac1{t_U}.
+\label{eq:chain}
+\end{align}
+The $X$ derivative is taken with respect to the \emph{original spin density}, not $m$. The derivatives of the energy density with respect to the independent spin-channel variables are therefore
+\begin{align}
+\boxed{v_{n\sigma}=\frac{\partial f_\sigma}{\partial n_\sigma}=2\left[\frac{4B}{3m}H+B(H_ss_m+H_\alpha\alpha_m)\right]+BDG X'}\label{eq:vn}\\[4pt]
+\boxed{v_{\gamma\sigma}=\frac{\partial f_\sigma}{\partial\gamma_\sigma}=4B(H_ss_q+H_\alpha\alpha_q)}\label{eq:vg}\\[4pt]
+\boxed{v_{\tau\sigma}=\frac{\partial f_\sigma}{\partial\tau_\sigma}=\frac{2BXDG'}{t_U}=\frac{A_xm^{4/3}XDG'}{t_U}.}\label{eq:vt}
+\end{align}
+All implicit $n_\sigma$ and $\gamma_\sigma$ derivatives of $\alpha$ are present in Eqs.~\eqref{eq:vn}--\eqref{eq:vg}. In particular, restoring $v_{\tau\sigma}$ alone does \emph{not} restore the complete gate variation. At $q\to0$ the regular small-gradient limits must be used rather than a literal division by $q$.
+
+\section{Orbital variation and GKS operator}
+Since $\delta\gamma_\sigma=2\grad n_\sigma\cdot\grad\delta n_\sigma$ and
+\begin{equation}
+\delta\tau_\sigma=\frac12\sum_i f_{i\sigma}\left(\grad\delta\phi_{i\sigma}^*\cdot\grad\phi_{i\sigma}+\mathrm{c.c.}\right),
+\end{equation}
+integration by parts under vanishing boundary terms gives
+\begin{equation}
+\frac{\delta E_x}{\delta\phi_{i\sigma}^*}=f_{i\sigma}\left[v_{n\sigma}-2\grad\cdot(v_{\gamma\sigma}\grad n_\sigma)-\frac12\grad\cdot(v_{\tau\sigma}\grad)\right]\phi_{i\sigma}.
+\end{equation}
+The fully variational GKS equation is
+\begin{equation}
+\boxed{\left[-\frac12\grad^2+v_{\rm ext}+v_H+\hat v_{c\sigma}+v_{n\sigma}-2\grad\cdot(v_{\gamma\sigma}\grad n_\sigma)-\frac12\grad\cdot(v_{\tau\sigma}\grad)\right]\phi_{i\sigma}=\epsilon_{i\sigma}\phi_{i\sigma}.}\label{eq:gks}
+\end{equation}
+Here $-2\grad\cdot(v_{\gamma\sigma}\grad n_\sigma)$ is a \emph{multiplicative} potential; the final term is a differential operator acting on the orbital. In a real atom-centered basis,
+\begin{equation}(V_\tau)_{\mu\nu}=\frac12\int v_{\tau\sigma}(\grad\chi_\mu)\cdot(\grad\chi_\nu)\dd.\end{equation}
+The principal kinetic coefficient is $1+v_{\tau\sigma}$; its positivity is a useful ellipticity diagnostic, not a guarantee of SCF convergence.
+
+\section{Frozen gate and the missing first variation}
+For $f_{\rm gate}=BXG(\alpha)D(s)$, a frozen gate omits
+\begin{equation}\boxed{\delta E_{\rm missing}=\sum_\sigma\int BXD\,G'(\alpha)\,\delta\alpha\dd.}\end{equation}
+This contributes to all three derivatives in Eqs.~\eqref{eq:vn}--\eqref{eq:vt}. For an exactly current-free one-orbital density, $\alpha=0$ and $G'(0)=0$, so the first-order omission vanishes at that point; this does not prove multi-orbital variationality.
+
+\section{Different orbital-current descriptor}
+The real-space alternative
+\begin{equation}
+t_{W,\mathrm{orb}}=\frac{|\sum_i f_i\phi_i^*\grad\phi_i|^2}{2n}=\frac{|\grad n|^2}{8n}+\frac{|\mathbf j_p|^2}{2n}
+\end{equation}
+contains the paramagnetic current $\mathbf j_p$. Thus $\tau-t_{W,\mathrm{orb}}$ is not a function of $(n,\gamma,\tau)$ alone. A standard PySCF meta-GGA callback returning only $(v_n,v_\gamma,v_\tau)$ does not provide its general orbital/current derivative. The recommended first implementation uses density-based $t_W=|\grad n|^2/(8n)$ and treats the current-corrected variant as a separate research branch.
+
+\section{Implementation checks and decision criteria}
+\begin{enumerate}
+\item \textbf{Local derivative test.} At physical points $(n_\sigma,\gamma_\sigma,\tau_\sigma)$, compare Eqs.~\eqref{eq:vn}--\eqref{eq:vt} with centered differences of the \emph{same coded energy density}. Include points inside the density window and with $\alpha\ne0$.
+\item \textbf{Clips and floors.} If $m$, $q$, $s$, or $\alpha$ is clipped, differentiate the \emph{clipped} energy piecewise. Zero derivatives outside active intervals, and separately test one-sided behavior at the boundaries. A hard cutoff can introduce non-smoothness and must not be mistaken for the smooth $X$ window.
+\item \textbf{Orbital directional test.} For orthonormality-preserving orbital rotations $\Phi(\theta)$, verify $[E_x(\theta)-E_x(-\theta)]/(2\theta)$ against the expectation of the implemented GKS matrix. Perturbations must change $\alpha$; H and He alone are insufficient.
+\item \textbf{Matched controls.} Compare frozen-gate and fully differentiated variants with identical $R(s)$, $X$, grid, basis, and SCF settings. Begin with H, He, H$_2$, CH$_4$, Be, and Ne. Report nonconvergence rather than silently changing the functional.
+\item \textbf{Energy and force consistency.} After orbital stationarity is verified, compare molecular finite-displacement energy derivatives to analytical forces where available, including all basis-response/Pulay terms.
+\item \textbf{Physical tests.} Separate bound virtual levels, HOMO energies, molecular binding curves, and many-electron exchange-energy errors. None is guaranteed by complete variationality alone.
+\end{enumerate}
+\section{Status and limitations}
+The standard meta-GGA GKS variational structure is known. The formulas above are the specialized first derivatives of the stated GP93R model, subject to the precise numerical floors, clipping, and spin conventions of the implementation. They do not establish that the fully differentiated GP93R is numerically stable or accurate. In particular, the previous frozen-gate CH$_4$ results must not be relabeled as fully variational calculations. The current-dependent descriptor requires an additional derivation and implementation.
+\begin{thebibliography}{9}
+\bibitem{GP93} P. M. W. Gill and J. A. Pople, Phys. Rev. A \textbf{47}, 2383 (1993).
+\bibitem{PBE} J. P. Perdew, K. Burke, and M. Ernzerhof, Phys. Rev. Lett. \textbf{77}, 3865 (1996).
+\bibitem{CAP} J. Carmona-Esp\'indola \emph{et al.}, J. Chem. Phys. \textbf{142}, 054105 (2015).
+\end{thebibliography}
+\end{document}

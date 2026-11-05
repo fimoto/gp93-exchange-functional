@@ -506,6 +506,35 @@ Check `gga_self_check_max_abs_dv_ha` in the metadata (below \(10^{-10}\) Ha)
 and the mixing and grid checks in the summary. This stage takes about half an
 hour on one core.
 
+## 10e. Stage 13 — fully variational and frozen-gate GP93R
+
+Scientific question: when the iso-orbital gate of GP93R is differentiated (the
+standard density-based \(\tau_W\) meta-GGA of the variational GKS note in
+`calculations/gp93r_variational/`), is the first variation implemented
+correctly, what does a frozen gate omit, and is the self-consistent problem
+well posed?
+
+```bash
+python -m json.tool inputs/gp93r_variational.json
+python calculations/gp93r_variational/run_gp93r_variational.py
+cat results/gp93r_variational/point_checks.csv
+cat results/gp93r_variational/gks_directional.csv
+cat results/gp93r_variational/scf_frozen_vs_variational.csv
+cat results/gp93r_variational/vtau_negative_regions.csv
+```
+
+Check in the metadata that the analytic derivatives agree with the canonical
+callback (about \(4\times10^{-14}\)) and with the differences (below
+\(10^{-7}\) for \(s\le5\)), and that the GKS matrix agrees with the rotation
+differences for r²SCAN and the variational GP93R (below \(2\times10^{-7}\)).
+The frozen gate misses 3–76 % of the directional derivative in Be, Ne and
+CH₄. In the SCF table, H, He and H₂ give identical frozen and variational rows
+(\(\alpha=0\)); Ne converges with both gates; Be and CH₄ do not converge with
+the variational gate. `vtau_negative_regions.csv` shows why: on the frozen
+density \(1+v_\tau\) is negative for about 0.5 (Be) and 0.7 (CH₄)
+electrons, all on the branch \(F_R<F_{\rm PBE}\) with a partly open gate.
+This stage takes about five minutes on four cores.
+
 ## 11. Paper-table reconstruction
 
 The five tables require no generated intermediate. Their numerical sources

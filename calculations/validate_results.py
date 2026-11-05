@@ -93,6 +93,12 @@ def main() -> None:
             "results/radial/radial_variants_summary.csv",
             "results/radial/radial_variants_levels.csv",
             "results/radial/radial_variants_metadata.json",
+            "inputs/gp93r_variational.json",
+            "results/gp93r_variational/point_checks.csv",
+            "results/gp93r_variational/gks_directional.csv",
+            "results/gp93r_variational/scf_frozen_vs_variational.csv",
+            "results/gp93r_variational/vtau_negative_regions.csv",
+            "results/gp93r_variational/gp93r_variational_metadata.json",
         )
     )
     selected = load_json("calibration/selected_parameters.json")
@@ -620,6 +626,29 @@ def main() -> None:
     require(max(float(row["energy_ha"]) for row in variant_levels
                 if row["functional"] == "CAP_X" and row["above_reported_threshold"] == "False")
             < 0.0, "CAP level bookkeeping failed")
+
+    # Fully variational and frozen-gate GP93R.
+    gv_input = json.loads((ROOT / "inputs" / "gp93r_variational.json").read_text(encoding="utf-8"))
+    gv_meta = load_json("gp93r_variational/gp93r_variational_metadata.json")
+    require(gv_meta["input_settings"] == gv_input,
+            "GP93R variational results do not match the current input deck")
+    require(gv_meta["point_checks"]["pass_fd"] and gv_meta["point_checks"]["pass_canonical"],
+            "GP93R variational point checks failed")
+    require(gv_meta["gks_directional"]["pass_gks"], "GP93R GKS-matrix check failed")
+    gv_scf = {(row["system"], row["gate"]): row
+              for row in rows("gp93r_variational/scf_frozen_vs_variational.csv")}
+    require(len(gv_scf) == len(gv_input["scf"]["systems"]) * len(gv_input["scf"]["gates"]),
+            "GP93R frozen/variational SCF table is incomplete")
+    for system in ("H", "He", "H2"):
+        frozen, variational = gv_scf[(system, "frozen")], gv_scf[(system, "variational")]
+        require(frozen["converged"] == "True" and variational["converged"] == "True",
+                f"one-orbital GP93R SCF did not converge for {system}")
+        require(abs(float(frozen["E_tot_Ha"]) - float(variational["E_tot_Ha"])) < 1e-8,
+                f"frozen and variational GP93R differ for one-orbital {system}")
+    for row in rows("gp93r_variational/vtau_negative_regions.csv"):
+        if int(row["points"]) > 0:
+            require(row["all_on_D_negative"] == "True",
+                    f"1 + v_tau < 0 off the D < 0 branch for {row['system']}")
 
     expected_figures = (
         "fig_gp93_building_block.png",

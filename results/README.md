@@ -6,7 +6,7 @@ Calculation programs write CSV/JSON data here; `calculations/plot_results.py`
 reads those saved data and writes figures in a separate step.
 
 Paths beginning with `analytic/`, `atomic/`, `calibration/`, `h2/`,
-`potentials/`, or `radial/` are relative to this directory. All other paths are relative to
+`potentials/`, `radial/`, or `gp93r_variational/` are relative to this directory. All other paths are relative to
 the repository root.
 
 The row counts below correspond to the released input decks and provide
@@ -30,6 +30,7 @@ Quantities without a stated unit are dimensionless or are counts.
 | local stability and GP93R data | `python calculations/analytic/run_stability.py` | `functional/parameters.json`, `functional/gp93r.py` | `analytic/stability_curves.csv`, `analytic/stability_summary.csv`, `analytic/stability_metadata.json`, `analytic/gp93r_hydrogen_potential.csv` |
 | basis-free radial spectra | `python calculations/radial/run_radial.py` | `inputs/radial.json`, `functional/parameters.json`, `functional/gp93r.py` | `radial/coulomb_test.csv`, `radial/radial_summary.csv`, `radial/radial_levels.csv`, `radial/radial_metadata.json` |
 | radial ablation and CAP | `python calculations/radial/run_radial_variants.py` | `inputs/radial_variants.json`, `inputs/radial.json`, `functional/gp93r.py` | `radial/radial_variants_summary.csv`, `radial/radial_variants_levels.csv`, `radial/radial_variants_metadata.json` |
+| fully variational vs frozen GP93R | `python calculations/gp93r_variational/run_gp93r_variational.py` | `inputs/gp93r_variational.json`, `functional/gp93r.py`, `functional/gp93r_variational.py` | `gp93r_variational/point_checks.csv`, `gp93r_variational/gks_directional.csv`, `gp93r_variational/scf_frozen_vs_variational.csv`, `gp93r_variational/vtau_negative_regions.csv`, `gp93r_variational/gp93r_variational_metadata.json` |
 
 The selected switch parameters are calibrated values, not additional fitted
 inputs. Before downstream stages, verify that
@@ -437,6 +438,54 @@ Written by `calculations/radial/run_radial_variants.py` from
 The first two rows separate the two GP93R changes. The metadata records the
 self-check of the analytic GGA channel against the canonical PBE path on the
 hydrogen density (`gga_self_check_max_abs_dv_ha`).
+
+## Fully variational and frozen-gate GP93R
+
+Written by `calculations/gp93r_variational/run_gp93r_variational.py` from
+`inputs/gp93r_variational.json`. The functional is GP93R of
+`functional/gp93r.py`, transcribed term by term from the variational GKS note
+(`calculations/gp93r_variational/GP93R_variational_GKS_note.tex`) in
+`functional/gp93r_variational.py`. Every case is exchange only.
+
+### `gp93r_variational/point_checks.csv`
+
+One row per class of points (222 points each): the largest relative
+difference from `mgga_fmix._channel` under `gp93r.use_gp93r`, the error of the
+analytic \(v_n,v_\gamma,v_\tau\) against fourth-order centred differences of
+the same energy density for \(s\le5\) (measure
+\(|v-v_{\rm FD}|\,x/[|B|(1+|H|)]\)), the same for all \(s\) (limited for
+large \(s\) by the cancellation in \(\alpha\)), and the number of points that
+the canonical hard zero (\(n_\sigma<10^{-6}\)) removes but the RSDFT
+convention (\(10^{-12}\)) keeps.
+
+### `gp93r_variational/gks_directional.csv`
+
+For an occupied-virtual rotation of PBE orbitals (cc-pVTZ, grid level 4):
+\(E_x\), the centred difference \(dE_x/d\theta\), the expectation
+\({\rm Tr}[V_x\,dD/d\theta]\) of the implemented GKS matrix, and their relative
+difference, for r²SCAN exchange (control), the fully variational and the
+frozen GP93R. The frozen-gate difference is the omitted first variation.
+
+### `gp93r_variational/scf_frozen_vs_variational.csv`
+
+Matched SCF (aug-cc-pVTZ, grid level 5, `conv_tol` \(10^{-9}\), at most 200
+cycles, started from the PBE-exchange density): convergence flag and cycles,
+\(E_{\rm tot}\) (Ha), \(E_x\) and \(E_x-E_x^{\rm HF}\) (Ha, HF in the same basis),
+\(-\epsilon_{\rm HOMO}\) (eV), and \(\min(1+v_\tau)\) of the fully variational
+functional on the final density. Non-converged rows are kept; their energies
+are the values at cycle 200 and have no physical meaning.
+
+### `gp93r_variational/vtau_negative_regions.csv`
+
+On the frozen-gate SCF density: the grid points and electrons where
+\(1+v_\tau<0\) (spin densities above \(10^{-6}\)), the ranges of \(n_\sigma\),
+\(s\), and \(\alpha\) there, and whether all of them lie on the branch
+\(D=F_R-F_{\rm PBE}<0\).
+
+### `gp93r_variational/gp93r_variational_metadata.json`
+
+Input settings, pass flags and largest errors of the point and GKS-matrix
+checks, the hard-zero convention, and the software versions.
 
 ## Figure source map
 
